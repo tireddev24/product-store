@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import {Container,  SimpleGrid,  Text, VStack } from '@chakra-ui/react'
+import { Container,  Heading,  SimpleGrid,  Text, VStack } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import {Link} from 'react-router-dom'
 import { useProductStore } from '../store/product'
@@ -14,14 +14,13 @@ const Homepage = () => {
   return (
     <Container maxW='container.xl' py={12}  >
      <VStack spacing={10}>
-      <Text
-        fontSize={{base:'30', lg:'40'}} 
-        fontWeight={'bold'}
+      <Heading as={'h1'}
+        size={{base: 'xl', lg:'2xl'}} 
         bgGradient={"linear(to-tr, cyan.400, blue.500)"}
         bgClip={"text"}
         textAlign={"center"}>
         Current Products 
-      </Text>
+      </Heading>
 
       <SimpleGrid
         columns={{
@@ -32,6 +31,7 @@ const Homepage = () => {
         spacing={10}
         w={'full'}
         mx={10}
+        placeItems={{base:'center', md:'left'}}
       >
         {products.map((product) => (
           <ProductCard key={product._id} product={product} />

@@ -40,7 +40,7 @@ export const useProductStore = create((set) =>({
         if(data.success){
             return {success: true, message: data.message}
         } else {
-            return {success:false, message: data.message}
+            return {success:false, message: "Server Error"}
         }
     },
 

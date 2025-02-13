@@ -1,4 +1,6 @@
-import { Box, Button, Container, Heading, Input,useToast,useColorModeValue, VStack } from "@chakra-ui/react";
+import { Box, Button, Container, Heading,
+     Input,useToast,useColorModeValue, 
+     VStack } from "@chakra-ui/react";
 import { useState } from "react"
 import { useProductStore } from "../store/product";
 
@@ -40,16 +42,17 @@ const handleAddProduct = async () => {
 
 
   return (
-    <Container maxW={"container.sm"}>
+    <Container maxW={"container.sm"} mt={8}>
         <VStack spacing={8}>
-            <Heading as={"h1"} size={"2xl"} textAlign={'center'} mb={8}>
+            <Heading as={"h1"} size={{base:'lg', sm:'xl' ,lg:"2xl"}} textAlign={'center'}  mb={6}>
                 Create New Product
             </Heading>
-            <Box w={'full'} bg={useColorModeValue("white", 'gray.800')} p={6} rounded={'lg'} shadow={'md'}
+            <Box w={'full'}  bg={useColorModeValue("white", 'gray.800')} p={6} rounded={'lg'} shadow={'md'}
                 >
-                <VStack spacing={4}>
-                    <Input
-                        placeholder="name"
+                <VStack spacing={6}>
+                    <Heading as={"h4"} size={{base:'md', sm:"lg"}}>Enter Product Details</Heading>
+                    <Input 
+                        placeholder="Name"
                         name="name"
                         value={newProduct.name}
                         onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}

@@ -1,6 +1,6 @@
 import { Button, Container, Flex, HStack, Text, useColorMode } from "@chakra-ui/react"
-import { Link } from "react-router-dom"
-import { BsPlusSquare } from "react-icons/bs";
+import { Link, useLocation } from "react-router-dom"
+import { BsHouse, BsPlusSquare } from "react-icons/bs";
 import { IoMoon } from "react-icons/io5";
 import { LuSun } from "react-icons/lu";
 
@@ -8,6 +8,8 @@ const Navbar = () => {
 
     const {colorMode, toggleColorMode} = useColorMode()
     
+    const location = useLocation()
+    const path = location.pathname
 
   return (
     <Container pt={2} maxW={'1240px'} px={4} >
@@ -31,10 +33,13 @@ const Navbar = () => {
         >
             <Link to={'/'}>Product Store</Link>
         </Text>
-        <HStack spacing={1} alignItems={"center"} mt={{base:'2px', sm: '0px'}} >
-            <Link to={'/create'}>
+        <HStack spacing={1} alignItems={"center"} my={{base:'2px', sm: '0px'}} >
+            <Link to={path.includes('/create')? '/' : '/create'}>
                 <Button>
-                    <BsPlusSquare fontSize={20} />
+                { path.includes('/create')? 
+                    <BsHouse fontSize={20} />
+                :    <BsPlusSquare fontSize={20} />
+                }
                 </Button>
             </Link>
             

@@ -3,7 +3,8 @@ import { Box, Modal, Image, Heading,
      useToast, useDisclosure, ModalOverlay, 
      ModalContent, ModalHeader, ModalCloseButton, 
      ModalBody, VStack, Input, ModalFooter, 
-     Button, } from "@chakra-ui/react"
+     Button,
+      } from "@chakra-ui/react"
 import {FiEdit} from "react-icons/fi"
 import {FaTrashCan} from "react-icons/fa6"
 import { useProductStore } from "../store/product"
@@ -67,6 +68,7 @@ const ProductCard = ({product}) => {
 
   return (
     <Box 
+    w={{base:"400px", md:'full'}}
     position={'relative'}
     bg={bg}
     shadow={'lg'}
