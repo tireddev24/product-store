@@ -1,17 +1,23 @@
 import { create } from "zustand"
 
+const url = 'http://localhost:8002';
+// const url = '';   //for deployment
+
+
 export const useProductStore = create((set) =>({
     products: [],
     setProducts: (products) => set({products}),
 
     fetchProducts: async () => {
-        const res = await fetch("http://localhost:8002/api/products")
+        const res = await fetch(`${url}/api/products`) 
+        // const res = await fetch(`${url}/api/products`)
         const data = await res.json()
         set({products: data.data})
     },
 
     fetchSearchedProduct: async (pid) => {
-        const res = await fetch(`http://localhost:8002/api/products/${pid}`)
+        const res = await fetch(`${url}/api/products/${pid}`)
+        // const res = await fetch(`${url}/api/products/${pid}`)
         const data = await res.json()
         set({products: data.data})
     },
@@ -20,7 +26,8 @@ export const useProductStore = create((set) =>({
         if(!newProduct.name || !newProduct.price || !newProduct.image){
             return {success:false, message:"Please fill in all fields"}
         }
-        const res = await fetch("http://localhost:8002/api/products", {
+        const res = await fetch(`${url}/api/products`, {
+
             method:"POST",
             headers:{
                 "Content-Type" : "application/json"
@@ -38,7 +45,7 @@ export const useProductStore = create((set) =>({
     },
 
     updateProduct: async (pid, updatedProduct) => {
-        const res = await fetch(`http://localhost:8002/api/products/${pid}`, {
+        const res = await fetch(`${url}/api/products/${pid}`, {
             method: 'PUT',
             headers:{
                 "Content-Type" : "application/json"
@@ -57,7 +64,7 @@ export const useProductStore = create((set) =>({
     },
 
     deleteProduct: async (pid) => {
-            const res = await fetch(`http://localhost:8002/api/products/${pid}`, {
+            const res = await fetch(`${url}/api/products/${pid}`, {
                 method: "DELETE"
             })
             const data = await res.json()
