@@ -12,12 +12,12 @@ const Homepage = () => {
   useEffect(() => { fetchProducts() }, [fetchProducts])
 
   return (
-    <Container maxW='container.xl' py={12} >
-     <VStack spacing={8}>
+    <Container maxW='container.xl' py={12}  >
+     <VStack spacing={10}>
       <Text
-        fontSize={'30'} 
+        fontSize={{base:'30', lg:'40'}} 
         fontWeight={'bold'}
-        bgGradient={"linear(to-r, cyan.400, blue.500)"}
+        bgGradient={"linear(to-tr, cyan.400, blue.500)"}
         bgClip={"text"}
         textAlign={"center"}>
         Current Products 
@@ -30,7 +30,8 @@ const Homepage = () => {
           lg:3
         }}
         spacing={10}
-        w={"full"}
+        w={'full'}
+        mx={10}
       >
         {products.map((product) => (
           <ProductCard key={product._id} product={product} />

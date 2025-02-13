@@ -1,4 +1,9 @@
-import { Box, Modal, Image, Heading, Text, HStack, IconButton, useColorModeValue, useToast, useDisclosure, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, VStack, Input, ModalFooter, Button } from "@chakra-ui/react"
+import { Box, Modal, Image, Heading, 
+    Text, HStack, IconButton, useColorModeValue,
+     useToast, useDisclosure, ModalOverlay, 
+     ModalContent, ModalHeader, ModalCloseButton, 
+     ModalBody, VStack, Input, ModalFooter, 
+     Button, } from "@chakra-ui/react"
 import {FiEdit} from "react-icons/fi"
 import {FaTrashCan} from "react-icons/fa6"
 import { useProductStore } from "../store/product"
@@ -62,6 +67,7 @@ const ProductCard = ({product}) => {
 
   return (
     <Box 
+    position={'relative'}
     bg={bg}
     shadow={'lg'}
     rounded={'lg'}
@@ -69,19 +75,20 @@ const ProductCard = ({product}) => {
     transition={'all 0.3s'}
     _hover={{transform: "translateY(-5px)", shadow: "xlvb "}}
     >
-       <Image src={product.image} alt={product.name} h={48} w={'full'} objectFit={'cover'}/> 
+       <Image src={product.image} alt={product.name} h={52} w={'full'}  
+         objectFit={'cover'} 
+       /> 
        <Box p={4}>
-        <Heading as='h3' size='md' mb={2}>
+        <Heading as='h3' size={{base:'lg', md:'md'}} mb={2}>
             {product.name}
         </Heading>
-        <Text fontWeight={'bold'} fontSize={'xl'} color={textColor} mb={4}>
+        <Text fontWeight={'bold'} fontSize={'xl'} color={textColor} mb={8}>
             ${product.price}
         </Text>
 
-        <HStack spacing={2}>
+        <HStack spacing={2} position={'absolute'} bottom={2} right={4} >
             <IconButton icon={<FiEdit />} onClick={onOpen} colorScheme="blue"/>
             <IconButton icon={<FaTrashCan />} onClick={() => handleDeleteProduct(product._id)} colorScheme="red"/>
-
         </HStack>    
 
         </Box>

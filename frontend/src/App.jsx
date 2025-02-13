@@ -14,13 +14,11 @@ function App() {
 
 
   return (
-    <Box minH={'100vh'} bg={useColorModeValue("gray.100", "gray.900")}>
-      {/* Navbar */}
+    <Box minW={'md'} marginX={{sm:'0', lg:'-5', xl:'-10'}} minH={'100vh'} bg={useColorModeValue("gray.100", "gray.900")}>
       <Navbar />
       <Routes>
         <Route path='/' element={
-          <Homepage
-          />} />
+          <Homepage />} />
         <Route path='/create' element={<Createpage />} />
       </Routes>
     </Box>

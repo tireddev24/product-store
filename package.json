@@ -2,15 +2,15 @@
   "name": "mern",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon backend/server.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
     "start": "node backend/server.js"
   },
   "type": "module",
-  "keywords": [],
-  "author": "",
+  "keywords": ["products", "store", "productstore", "product" ],
+  "author": "Michael Amao",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

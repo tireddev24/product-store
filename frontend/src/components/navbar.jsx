@@ -10,7 +10,7 @@ const Navbar = () => {
     
 
   return (
-    <Container maxW={'1140px'} px={4} >
+    <Container pt={2} maxW={'1240px'} px={4} >
         <Flex 
             h={16}
             alignItems={'center'}
@@ -22,7 +22,7 @@ const Navbar = () => {
 
         >
         <Text 
-            fontSize={{base: "22", sm: '28'}}
+            fontSize={{base: "22", sm: '28', 'lg':"32"}}
             fontWeight={"bold"}
             textTransform={"uppercase"}
             textAlign={"center"}
@@ -31,7 +31,7 @@ const Navbar = () => {
         >
             <Link to={'/'}>Product Store</Link>
         </Text>
-        <HStack spacing={2} alignItems={"center"}>
+        <HStack spacing={1} alignItems={"center"} mt={{base:'2px', sm: '0px'}} >
             <Link to={'/create'}>
                 <Button>
                     <BsPlusSquare fontSize={20} />
