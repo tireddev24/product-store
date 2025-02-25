@@ -2,8 +2,8 @@ import { Box, Modal, Image, Heading,
     Text, HStack, IconButton, useColorModeValue,
      useToast, useDisclosure, ModalOverlay, 
      ModalContent, ModalHeader, ModalCloseButton, 
-     ModalBody, VStack, Input, ModalFooter, 
-     Button,
+     ModalBody, VStack, Input, ModalFooter, Alert,
+     AlertIcon, Button,
       } from "@chakra-ui/react"
 import {FiEdit} from "react-icons/fi"
 import {FaTrashCan} from "react-icons/fa6"
@@ -32,7 +32,7 @@ const ProductCard = ({product}) => {
                 isClosable: false
             })
         } else {
-            setUpdatedProduct(updatedProduct)
+            // setUpdatedProduct(updatedProduct)
             toast({
                 title: "Success",
                 description: message,
@@ -94,23 +94,30 @@ const ProductCard = ({product}) => {
         </HStack>    
 
         </Box>
-        <Modal isOpen={isOpen}  onClose={onClose} >
+        <Modal isOpen={isOpen}  onClose={onClose} isCentered={true} closeOnOverlayClick={false} closeOnEsc={false}>
         <ModalOverlay />
         <ModalContent>
             <ModalHeader>Update Product</ModalHeader>
                 <ModalCloseButton />
             <ModalBody>
                 <VStack spacing={4}>
+                    <Alert status='warning' borderRadius={'0.7rem'}>
+                       <AlertIcon />
+                        Please fill in all fields
+                    </Alert>
                     <Input placeholder='Product Name' name='name' value={updatedProduct.name}
+                        required={true}
                         onChange={(e) => setUpdatedProduct({...updatedProduct, name: e.target.value})}
 
                     />
-                    <Input placeholder='Price' name='price' type="number" value={updatedProduct.price}
+                    <Input placeholder='Price' name='price in dollars ($)' type="number" value={updatedProduct.price}
                         onChange={(e) => setUpdatedProduct({...updatedProduct, price: e.target.value})}
+                        required={true}
 
                     />
-                    <Input placeholder='Image URL' name='image' value={updatedProduct.image}
+                    <Input placeholder='Copy and paste image URL here!' name='image' value={updatedProduct.image}
                         onChange={(e) => setUpdatedProduct({...updatedProduct, image: e.target.value})}
+                        required={true}
 
                     />
                 </VStack>
