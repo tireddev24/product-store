@@ -9,6 +9,7 @@ import {FiEdit} from "react-icons/fi"
 import {FaTrashCan} from "react-icons/fa6"
 import { useProductStore } from "../store/product"
 import { useState } from "react"
+import Deletealert from "./deletealert"
 
 const ProductCard = ({product}) => {
 
@@ -17,6 +18,7 @@ const ProductCard = ({product}) => {
     const toast = useToast()
     
     const {isOpen, onOpen, onClose } = useDisclosure()
+    const {isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
     
     const { deleteProduct, updateProduct }  = useProductStore()
     
@@ -43,25 +45,7 @@ const ProductCard = ({product}) => {
         }
     }
 
-    const handleDeleteProduct = async (pid) => {
-        const {success, message} = await deleteProduct(pid)
-        if(!success){
-            toast({
-                title: "Error",
-                description: message,
-                status: "error",
-                isClosable: false
-            })
-        } else {
-            toast({
-                title: "Success",
-                description: message,
-                status: "success",
-                isClosable: true,
-                duration: 3000
-            })
-        }
-    }
+
 
     const textColor = useColorModeValue("gray.600", "gray.200")
     const bg = useColorModeValue("white", "gray.800")
@@ -90,7 +74,8 @@ const ProductCard = ({product}) => {
 
         <HStack spacing={2} position={'absolute'} display={{base:'flex', md:''}} bottom={2} right={{base:'', md:'2', lg:'3' }} justify={{base:'space-between'}} minW={{base:'18rem', md:'20rem', lg:'full'}} >
             <IconButton icon={<FiEdit />} ml={{base:'0', md:'auto'}} onClick={onOpen} colorScheme="blue"/>
-            <IconButton icon={<FaTrashCan />} onClick={() => handleDeleteProduct(product._id)} colorScheme="red"/>
+            <IconButton icon={<FaTrashCan />} onClick={onDeleteOpen} colorScheme="red"/>
+            <Deletealert isOpen={isDeleteOpen} onClose={onDeleteClose} product={product} updatedProduct={updatedProduct}/>
         </HStack>    
 
         </Box>
@@ -131,6 +116,9 @@ const ProductCard = ({product}) => {
                 </Button>
             </ModalFooter>
         </ModalContent>
+
+
+
         </Modal>
         </Box>
   )
