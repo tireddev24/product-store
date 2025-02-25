@@ -35,7 +35,7 @@ const Navbar = () => {
             <Link to={'/'}>Product Store</Link>
         </Text>
         <HStack spacing={2} alignItems={"center"} position={{base:'absolute', sm: "relative"}} 
-        justify={{base:'space-between', sm:'normal'}} bg={"green"} w={{base:'22rem', sm:'7.5rem'}} 
+        justify={{base:'space-between', sm:'normal'}} w={{base:'22rem', sm:'7.5rem'}} 
         mx={{base:-2, sm:0}}  my={{base:'2px', sm: '0px'}} >
             <Link to={path.includes('/create')? '/' : '/create'}>
                 <Button>
