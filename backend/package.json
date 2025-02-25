@@ -4,9 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon backend/server.js",
+    "dev": "nodemon server.js",
     "build": "npm install && npm install --prefix frontend --production=false && npm run build --prefix frontend",
-    "start": "node backend/server.js"
+    "start": "node server.js"
   },
   "type": "module",
   "keywords": ["products", "store", "productstore", "product" ],

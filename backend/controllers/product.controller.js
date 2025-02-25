@@ -70,7 +70,7 @@ export const deleteProduct = async (req, res) => {
     } catch (error) {
         res.status(500).json({success: false, message: "Product could not be deleted"})
     }
-    console.log("id: "+id)
+  
 
 }
 

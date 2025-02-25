@@ -94,7 +94,7 @@ const ProductCard = ({product}) => {
         </HStack>    
 
         </Box>
-        <Modal isOpen={isOpen} onClose={onClose} >
+        <Modal isOpen={isOpen}  onClose={onClose} >
         <ModalOverlay />
         <ModalContent>
             <ModalHeader>Update Product</ModalHeader>
