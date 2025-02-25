@@ -26,7 +26,9 @@ app.use("/api/products", productRoutes)
 //         res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
 //     })
 // }
-
+app.get('/', (req, res) => {
+    res.json({message: "Server is running"})
+}
 
 app.listen(port, () => {
     connectDB()
