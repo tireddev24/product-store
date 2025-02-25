@@ -14,7 +14,7 @@ function App() {
 
 
   return (
-    <Box  marginX={{base:'-2' , lg:'-5', xl:'-10'}} minH={'100vh'} bg={useColorModeValue("gray.100", "gray.900")}>
+    <Box  marginX={{base:'-2' , lg:'-5', xl:'-10'}} minW={'sm'} minH={'100vh'} bg={useColorModeValue("gray.100", "gray.900")}>
       <Navbar />
       <Routes>
         <Route path='/' element={

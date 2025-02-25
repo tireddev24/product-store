@@ -68,7 +68,7 @@ const ProductCard = ({product}) => {
 
   return (
     <Box 
-    w={{base:"400px", md:'full'}}
+    w={{base:"20rem", md:'21rem', lg:'full'}}
     position={'relative'}
     bg={bg}
     shadow={'lg'}
@@ -77,19 +77,19 @@ const ProductCard = ({product}) => {
     transition={'all 0.3s'}
     _hover={{transform: "translateY(-5px)", shadow: "xlvb "}}
     >
-       <Image src={product.image} alt={product.name} h={52} w={'full'}  
+       <Image src={product.image} alt={product.name} h={{base:'8rem', lg:'12rem'}} w={'full'}  
          objectFit={'cover'} 
        /> 
        <Box p={4}>
-        <Heading as='h3' size={{base:'lg', md:'md'}} mb={2}>
+        <Heading as='h3' size={{base:'md'}} mb={2}>
             {product.name}
         </Heading>
-        <Text fontWeight={'bold'} fontSize={'xl'} color={textColor} mb={8}>
+        <Text fontWeight={'bold'} fontSize={{base:'md', lg:'xl'}} color={textColor} mb={8}>
             ${product.price}
         </Text>
 
-        <HStack spacing={2} position={'absolute'} bottom={2} right={4} >
-            <IconButton icon={<FiEdit />} onClick={onOpen} colorScheme="blue"/>
+        <HStack spacing={2} position={'absolute'} display={{base:'flex', md:''}} bottom={2} right={{base:'', md:'2', lg:'3' }} justify={{base:'space-between'}} minW={{base:'18rem', md:'20rem', lg:'full'}} >
+            <IconButton icon={<FiEdit />} ml={{base:'0', md:'auto'}} onClick={onOpen} colorScheme="blue"/>
             <IconButton icon={<FaTrashCan />} onClick={() => handleDeleteProduct(product._id)} colorScheme="red"/>
         </HStack>    
 

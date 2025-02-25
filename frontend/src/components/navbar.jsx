@@ -24,16 +24,19 @@ const Navbar = () => {
 
         >
         <Text 
-            fontSize={{base: "22", sm: '28', 'lg':"32"}}
+            fontSize={{base: "26", sm: '28', 'lg':"32"}}
             fontWeight={"bold"}
             textTransform={"uppercase"}
             textAlign={"center"}
             bgGradient={"linear(to-r, cyan.400, blue.500)"}
             bgClip={"text"}
+            mt={{base:10,sm:'0'}}
         >
             <Link to={'/'}>Product Store</Link>
         </Text>
-        <HStack spacing={1} alignItems={"center"} my={{base:'2px', sm: '0px'}} >
+        <HStack spacing={2} alignItems={"center"} position={{base:'absolute', sm: "relative"}} 
+        justify={{base:'space-between', sm:'normal'}} bg={"green"} w={{base:'22rem', sm:'7.5rem'}} 
+        mx={{base:-2, sm:0}}  my={{base:'2px', sm: '0px'}} >
             <Link to={path.includes('/create')? '/' : '/create'}>
                 <Button>
                 { path.includes('/create')? 
