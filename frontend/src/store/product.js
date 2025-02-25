@@ -1,7 +1,7 @@
 import { create } from "zustand"
 
-const url = 'http://localhost:8002';
-// const url = '';   //for deployment  //is only needed when backend and frontend are hosted seperately
+// const url = 'http://localhost:8002';
+const url = 'https://product-store-back.onrender.com/api/products';   //for deployment  //is only needed when backend and frontend are hosted seperately
 
 
 export const useProductStore = create((set) =>({
