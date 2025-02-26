@@ -4,14 +4,19 @@ import { Box, Modal, Image, Heading,
      ModalContent, ModalHeader, ModalCloseButton, 
      ModalBody, VStack, Input, ModalFooter, Alert,
      AlertIcon, Button,
+     Badge,
+     LightMode,
       } from "@chakra-ui/react"
 import {FiEdit} from "react-icons/fi"
 import {FaTrashCan} from "react-icons/fa6"
 import { useProductStore } from "../store/product"
 import { useState } from "react"
 import Deletealert from "./deletealert"
+import { time } from "framer-motion"
+import Newbadge from './newbadge'
 
 const ProductCard = ({product}) => {
+
 
     const [updatedProduct, setUpdatedProduct] = useState(product)
     
@@ -61,6 +66,7 @@ const ProductCard = ({product}) => {
     transition={'all 0.3s'}
     _hover={{transform: "translateY(-5px)", shadow: "xlvb "}}
     >
+        <Newbadge dateCreated={product.createdAt} />
        <Image src={product.image} alt={product.name} h={{base:'8rem', lg:'12rem'}} w={'full'}  
          objectFit={'cover'} 
        /> 

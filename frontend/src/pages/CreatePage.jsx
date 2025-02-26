@@ -3,9 +3,12 @@ import { Box, Button, Container, Heading,
      VStack, 
      Tooltip,
      Alert,
-     AlertIcon} from "@chakra-ui/react";
-import { useState } from "react"
+     AlertIcon,
+     LightMode,
+     DarkMode} from "@chakra-ui/react";
+import { useRef, useState } from "react"
 import { useProductStore } from "../store/product";
+import { Link, useNavigate } from "react-router-dom";
 
 const Createpage = () => {
 const [newProduct, setNewProduct] = useState({
@@ -14,8 +17,13 @@ const [newProduct, setNewProduct] = useState({
     image:""
 });
 
+const navigate = useNavigate()
+
 const toast = useToast()
 
+    const nameref  = useRef(null)
+    const priceref  = useRef(null)
+    const imageref  = useRef(null)
 
 const { createProduct } = useProductStore()
 const handleAddProduct = async () => {
@@ -38,10 +46,17 @@ const handleAddProduct = async () => {
             isClosable: true,
             duration: 3000
         })
+        navigate('/')
     }
     setNewProduct({name:"", price:"", image:""})
 }
 
+    function handleref () {
+        if(!newProduct.name && !newProduct.price && !newProduct.image){
+            // nameref.current.focus()
+        } else if(newProduct.name) { priceref.current.focus() }
+        else if(newProduct.price) { imageref.current.focus()}
+    }
 
 
 
@@ -55,14 +70,17 @@ const handleAddProduct = async () => {
                 >
                 <VStack spacing={6}>
                     <Heading as={"h4"} size={{base:'md', sm:"lg"}}>Enter Product Details</Heading>
-                    <Alert status='warning' borderRadius={'0.7rem'}>
+                    <DarkMode>
+                    <Alert status='warning' fontFamily={'mono'} borderRadius={'0.7rem'}>
                         <AlertIcon />
                         Please fill in all fields
                     </Alert>
+                    </DarkMode>
                     <Tooltip fontWeight={'900'} fontFamily={'monospace'} borderRadius={'0.5rem'} hasArrow={true} label='Enter the name of your product' placement="bottom-start" openDelay={500}>
                     <Input 
                         placeholder="Product name"
                         name="name"
+                        ref={nameref}
                         value={newProduct.name}
                         onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
                         />
@@ -71,6 +89,7 @@ const handleAddProduct = async () => {
                     <Input
                         placeholder="Price in dollars ($)"
                         name="price"
+                        ref={priceref}
                         type="number"
                         value={newProduct.price}
                         onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
@@ -80,15 +99,18 @@ const handleAddProduct = async () => {
                     <Input
                         placeholder="Copy and paste URL here!"
                         name="image"
+                        ref={imageref}
                         value={newProduct.image}
                         onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+                        // _before={{content: '"jsjs"', display:'inline-block', color: 'red', h:'full', mr:'2'}}
                     />
                     </Tooltip>
                   
-
-                    <Button colorScheme="blue" onClick={handleAddProduct}>
+                    
+                        <Button colorScheme="blue" onClick={() => {handleAddProduct(); handleref()}} >
                         Add New Product
-                    </Button>
+                        </Button>
+                    
 
                 </VStack>
             </Box>
