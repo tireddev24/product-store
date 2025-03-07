@@ -12,6 +12,10 @@ const productSchema = mongoose.Schema({
     image : {
         type : String,
         required: true
+    },
+    fav : {
+        type : Boolean,
+        required: false
     }
 }, {
     timestamps: true

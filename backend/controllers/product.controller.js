@@ -74,3 +74,27 @@ export const deleteProduct = async (req, res) => {
 
 }
 
+
+export const updateFav = async (req, res) => {
+    const {id} = req.params
+
+    const favStat = req.body
+
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({success: false, message: "Invalid Product Id"})
+    }
+
+    try {
+        const data = await Product.findByIdAndUpdate({_id: id}, {$set:{"fav" : favStat.fav}}, {new: true})
+        if(data.fav){
+            return res.status(201).json({success: true, data: data, message: "Added to favourites!" })
+        }
+        else return res.status(201).json({success: true, data: data, message: "Removed from favourites!" })
+
+    } catch (error) {
+        return res.status(500).json({success: false, message: "Unable to add to favourites"})
+    }
+
+
+}
+

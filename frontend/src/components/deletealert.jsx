@@ -8,6 +8,7 @@ import {
     AlertDialogOverlay,
     Button,
     AlertDialogCloseButton,
+    LightMode,
   } from '@chakra-ui/react'
   import { useProductStore } from "../store/product"
 
@@ -43,9 +44,11 @@ function Deletealert({product, isOpen, onClose}) {
      <AlertDialog
         isOpen={isOpen}
         onClose={onClose}
+        motionPreset='slideInBottom'
+        isCentered={{base: false, md:true}}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent >
             <AlertDialogHeader fontSize='lg' fontWeight='bold'>
               Delete Product
             </AlertDialogHeader>
@@ -58,9 +61,11 @@ function Deletealert({product, isOpen, onClose}) {
               <Button onClick={onClose}>
                 Cancel
               </Button>
+              <LightMode>
               <Button colorScheme='red' onClick={() => handleDeleteProduct(product._id)} ml={3}>
                 Delete
               </Button>
+              </LightMode>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialogOverlay>

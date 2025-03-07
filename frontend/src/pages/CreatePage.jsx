@@ -68,6 +68,7 @@ const handleAddProduct = async () => {
             </Heading>
             <Box w={'full'}  bg={useColorModeValue("white", 'gray.800')} p={6} rounded={'lg'} shadow={'md'}
                 >
+                    {/* create modal */}
                 <VStack spacing={6}>
                     <Heading as={"h4"} size={{base:'md', sm:"lg"}}>Enter Product Details</Heading>
                     <DarkMode>

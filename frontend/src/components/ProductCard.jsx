@@ -14,13 +14,16 @@ import { useState } from "react"
 import Deletealert from "./deletealert"
 import { time } from "framer-motion"
 import Newbadge from './newbadge'
+import { GoHeart, GoHeartFill } from "react-icons/go"
 
 const ProductCard = ({product}) => {
 
-
     const [updatedProduct, setUpdatedProduct] = useState(product)
+    const [isFavourite, setIsFavourite] = useState(product.fav)
+    const [favProd, setFavProd] = useState()
     
     const toast = useToast()
+    const {updateFav, removeFav} = useProductStore()
     
     const {isOpen, onOpen, onClose } = useDisclosure()
     const {isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
@@ -50,13 +53,45 @@ const ProductCard = ({product}) => {
         }
     }
 
-
+    const toggleFav = async (id, favStat)  => {
+        setIsFavourite(prevIsFavourite => !prevIsFavourite)
+      
+        const setFav = async () => {
+           const {success, message} =  await updateFav(id,{fav: !favStat})
+            return {success : success, message: message}
+        }
+            
+        const status =  setFav()
+        
+        if((await status).success){
+            toast({
+                position:'top',
+                status: "success",
+                description: (await status).message,
+                isClosable: false,
+                duration: 3000, 
+                variant: 'top-accent',
+                colorScheme: "blue"
+            })
+        } else {
+            toast({
+                position:'top',
+                status: "error",
+                description: (await status).message,
+                isClosable: false,
+                duration: 3000, 
+                variant: 'top-accent',
+                colorScheme: "blue"
+            })
+        }
+    }
 
     const textColor = useColorModeValue("gray.600", "gray.200")
     const bg = useColorModeValue("white", "gray.800")
 
   return (
     <Box 
+    key={product._id}
     w={{base:"20rem", md:'21rem', lg:'full'}}
     position={'relative'}
     bg={bg}
@@ -70,6 +105,7 @@ const ProductCard = ({product}) => {
        <Image src={product.image} alt={product.name} h={{base:'8rem', lg:'12rem'}} w={'full'}  
          objectFit={'cover'} 
        /> 
+        <IconButton position={"absolute"} right={2} fontSize={'30'} icon={isFavourite === true? <GoHeartFill color={useColorModeValue('#F6E05E', "#D69E2E")} /> : <GoHeart />} onClick={() => toggleFav(product._id, isFavourite)} bg={'none'}/>
        <Box p={4}>
         <Heading as='h3' size={{base:'md'}} mb={2}>
             {product.name}
@@ -77,7 +113,6 @@ const ProductCard = ({product}) => {
         <Text fontWeight={'bold'} fontSize={{base:'md', lg:'xl'}} color={textColor} mb={8}>
             ${product.price}
         </Text>
-
         <HStack spacing={2} position={'absolute'} display={{base:'flex', md:''}} bottom={2} right={{base:'', md:'2', lg:'3' }} justify={{base:'space-between'}} minW={{base:'18rem', md:'20rem', lg:'full'}} >
             <IconButton icon={<FiEdit />} ml={{base:'0', md:'auto'}} onClick={onOpen} colorScheme="blue"/>
             <IconButton icon={<FaTrashCan />} onClick={onDeleteOpen} colorScheme="red"/>
@@ -85,9 +120,11 @@ const ProductCard = ({product}) => {
         </HStack>    
 
         </Box>
+
+        {/* update modal */}
         <Modal isOpen={isOpen}  onClose={onClose} isCentered={true} closeOnOverlayClick={false} closeOnEsc={false}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent w={{sm: '23rem', md: 'full'}}>
             <ModalHeader>Update Product</ModalHeader>
                 <ModalCloseButton />
             <ModalBody>

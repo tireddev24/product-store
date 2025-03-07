@@ -6,12 +6,14 @@ import Createpage from './pages/CreatePage.jsx'
 import Homepage from './pages/HomePage.jsx'
 import Navbar from './components/navbar'
 import { useColorModeValue } from '@chakra-ui/react'
-
+import { useProductStore } from './store/product.js'
+import { useEffect, useState } from 'react'
 
 
 
 function App() {
 
+  
 
   return (
     <Box  marginX={{base:'-2' , lg:'-5', xl:'-10'}} minW={'sm'} minH={'100vh'} bg={useColorModeValue("gray.100", "gray.900")}>
@@ -22,7 +24,7 @@ function App() {
         <Route path='/create' element={<Createpage />} />
       </Routes>
     </Box>
-  )
+  ) 
 }
 
 export default App
