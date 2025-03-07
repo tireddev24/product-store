@@ -57,17 +57,19 @@ const ProductCard = ({product}) => {
         setIsFavourite(prevIsFavourite => !prevIsFavourite)
       
         const setFav = async () => {
-           const {success, message} =  await updateFav(id,{fav: !favStat})
-            return {success : success, message: message}
+           const {success, message, data} =  await updateFav(id,{fav: !favStat})
+            return {success : success, message: message, data: data}
         }
-            
-        const status =  setFav()
         
-        if((await status).success){
+        
+
+        const status =  await setFav()
+        
+        if(status.data){
             toast({
                 position:'top',
                 status: "success",
-                description: (await status).message,
+                description: (status).message,
                 isClosable: false,
                 duration: 3000, 
                 variant: 'top-accent',
@@ -77,7 +79,7 @@ const ProductCard = ({product}) => {
             toast({
                 position:'top',
                 status: "error",
-                description: (await status).message,
+                description: (status).message,
                 isClosable: false,
                 duration: 3000, 
                 variant: 'top-accent',
@@ -88,6 +90,7 @@ const ProductCard = ({product}) => {
 
     const textColor = useColorModeValue("gray.600", "gray.200")
     const bg = useColorModeValue("white", "gray.800")
+    const heart = useColorModeValue('#F6E05E', "#D69E2E")
 
   return (
     <Box 
@@ -105,8 +108,20 @@ const ProductCard = ({product}) => {
        <Image src={product.image} alt={product.name} h={{base:'8rem', lg:'12rem'}} w={'full'}  
          objectFit={'cover'} 
        /> 
-        <IconButton position={"absolute"} right={2} fontSize={'30'} icon={isFavourite === true? <GoHeartFill color={useColorModeValue('#F6E05E', "#D69E2E")} /> : <GoHeart />} onClick={() => toggleFav(product._id, isFavourite)} bg={'none'}/>
-       <Box p={4}>
+        { isFavourite === true? 
+    
+        <IconButton position={"absolute"} right={2} fontSize={'30'}
+        icon={<GoHeartFill color={heart} />} 
+        onClick={() => toggleFav(product._id, isFavourite)} bg={'none'}/>
+
+        : 
+
+        <IconButton position={"absolute"} right={2} fontSize={'30'}
+        icon={<GoHeart />} 
+        onClick={() => toggleFav(product._id, isFavourite)} bg={'none'}/>
+        }
+
+        <Box p={4}>
         <Heading as='h3' size={{base:'md'}} mb={2}>
             {product.name}
         </Heading>

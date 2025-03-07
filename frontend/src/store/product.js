@@ -90,7 +90,7 @@ export const useProductStore = create((set) =>({
         set((state) => ({
             products: state.products.map((product) => (product._id === pid? data.data : product))
         }))
-        return {success: true, message: data.message}
+        return {success: true, message: data.message, data: data.data}
     },
     removeFav: async (pid, favStat) => {
         const res = await fetch(`${url}/api/products/fav/${pid}`, {
