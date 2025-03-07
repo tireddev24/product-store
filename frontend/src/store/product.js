@@ -1,5 +1,4 @@
 import { create } from "zustand"
-import { updateFav } from "../../../backend/controllers/product.controller";
 
 // const url = 'http://localhost:8002';
 const url = 'https://product-store-back.onrender.com';   //for deployment  //is only needed when backend and frontend are hosted seperately

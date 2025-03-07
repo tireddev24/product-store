@@ -18,7 +18,6 @@ function Deletealert({product, isOpen, onClose}) {
     const {deleteProduct} = useProductStore()
 
         const handleDeleteProduct = async (pid) => {
-            console.log(pid)
             const {success, message} = await deleteProduct(pid)
             if(!success){
                 toast({
