@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Box, Button, chakra, Container, Flex, Heading, HStack, Icon, IconButton, Input, Menu, 
    MenuButton,  MenuDivider,  MenuList, 
-    Radio,  RadioGroup, SimpleGrid, 
+    Radio,  RadioGroup, Select, SimpleGrid, 
      SlideFade, 
      Spinner, Stack,  Text, textDecoration, useColorMode, useColorModeValue, useToast, VStack } from '@chakra-ui/react'
      import {
@@ -16,8 +16,9 @@ import { useProductStore } from '../store/product'
 import ProductCard from '../components/ProductCard'
 import { FaSearch } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { Link } from 'react-router-dom';
-import { params } from '../store/sortparameters'
+import { Link, useNavigate } from 'react-router-dom';
+import { params, priceRange } from '../store/sortparameters'
+import { getSortedProducts } from '../functions/handlers';
 
 const Homepage = () => {
   
@@ -47,31 +48,11 @@ const Homepage = () => {
 
   const [rangeVal, setRangeVal] = useState([150, 100000]) 
 
+  const navigate = useNavigate()
+
   //sort products
-  function getSortedProducts(product){
-    if(searchval){
-      const p =  product.filter(p => p.name.toLowerCase().includes(searchval.toLowerCase()))
-      return p
-    }
-    if(sortKey.key === 's_price'){
-      const p = product.filter(p => p.price >= rangeVal[0] && p.price <= rangeVal[1])
-      return p
-    }
-  
-    if(sortKey.key === 'fav'){
-      return product.filter(p => p.fav === true)
-    }
-    if(sortKey.direction === 'asc'){
-      if(sortKey.key === 'name' || sortKey.key === 'createdAt'){
-        return product.sort((a,b) => a[sortKey.key].localeCompare(b[sortKey.key]))
-      }
-    return product.sort((a,b) => a[sortKey.key] - b[sortKey.key])
-    } 
-    return sortKey.key === 'name' || sortKey.key === 'createdAt'?
-     product.sort((a,b) => b[sortKey.key].localeCompare(a[sortKey.key]))    
-    :
-     product.sort((a,b) => b[sortKey.key] - a[sortKey.key])
-}
+
+
 
 
   //fetchdata
@@ -87,11 +68,12 @@ const Homepage = () => {
       }
     }
 
-    const timeout = setTimeout(() => {
-      get()
-      }, 2000)
+    get()
+    // const timeout = setTimeout(() => {
+    //   get()
+    //   }, 1500)
 
-    return () => clearTimeout(timeout)
+    // return () => clearTimeout(timeout)
   }, [])
 
   function handleSliderChange(val){
@@ -102,7 +84,8 @@ const Homepage = () => {
 
   function handleSlider(){
     handleRef('Price Range')
-    setSortKey({key: 's_price', direction: 'asc'})
+
+    setSortKey(priceRange)
     toast({
       position: 'top',
       status: "success",
@@ -143,14 +126,15 @@ const Homepage = () => {
     <Container maxW='container.xl' py={12} pos={'relative'} >
      <VStack spacing={10}>
       <Heading as={'h1'}
-        size={{base: 'xl', lg:'2xl'}} 
+        mt={'-1.5rem'}
+        size={{base: 'xl', md:'2xl'}} 
         bgGradient={"linear(to-tr, cyan.400, blue.500)"}
         bgClip={"text"}
         textAlign={"center"}>
         Current Products 
       </Heading>
       {/* search */}
-      <Container position={'relative'} w={'22rem'} >
+      <Container position={'relative'} w={{base:'17rem',sm:'22rem'}} >
       <Input 
         placeholder='Search'
         onChange={(e) => setSearchVal(e.target.value)}
@@ -163,8 +147,7 @@ const Homepage = () => {
         </Icon>
         <Box position={'absolute'} zIndex={2} w={'20rem'} 
         borderRadius={'0.2rem'} bg={searchbg} >
-
-        {searchval && getSortedProducts(products).map((product) => {
+        {searchval && getSortedProducts(products,searchval, sortKey).map((product) => {
           if(!product){
             console.log(1)
             return (
@@ -181,9 +164,10 @@ const Homepage = () => {
         }} )}
       
         </Box>
-
       </Container>
-      <RangeSlider colorScheme='blue' w={{base: '18rem', sm:'22rem', md:'25rem'}} 
+      <VStack >
+        <Text fontWeight={'bold'}>Price Range</Text>
+      <RangeSlider colorScheme='blue' w={{base: '16rem', sm:'20rem', md:'23rem'}} 
       aria-label={['min', 'max']} defaultValue={rangeVal} min={0} max={100000}
        onChange={(val) => handleSliderChange(val)}>
       <RangeSliderTrack>
@@ -192,21 +176,23 @@ const Homepage = () => {
       <RangeSliderThumb boxSize={6} index={0} ><Box color={rangeIcon} as={FaDollarSign} /></RangeSliderThumb>
       <RangeSliderThumb boxSize={6} index={1}><Box color={rangeIcon} as={FaDollarSign} /></RangeSliderThumb>
       </RangeSlider>
-      <HStack mt={5} pos={'relative'}>
-        <Button onClick={() => handleSlider()} top={'-12'} right={0} position={'absolute'}>Apply</Button>
-        <Input value={rangeVal[0]} type='number' onChange={(e) => setRangeVal([rangeVal[0]=e.target.value, rangeVal[1]])}  w={'10rem'} />
-        <Input value={rangeVal[1]} type='number' onChange={(e) => setRangeVal([...rangeVal, rangeVal[1]=e.target.value])}  w={'10rem'} />
+      <HStack mt={'2'} pos={'relative'}>
+        <Input value={rangeVal[0]} type='number' onChange={(e) => setRangeVal([rangeVal[0]=e.target.value, rangeVal[1]])}  w={{base:'6rem', sm:'7rem'}} />
+        <Input value={rangeVal[1]} type='number' onChange={(e) => setRangeVal([...rangeVal, rangeVal[1]=e.target.value])}  w={{base:'6rem', sm:'7rem'}} />
+        <Button onClick={() => handleSlider()} colorScheme='cyan'>Apply</Button>
       </HStack>
+      </VStack>
+
       {products.length > 0 && 
       
       <Menu >
-        <MenuButton w={{base:'10rem', sm:'15rem'}} textAlign={'left'} as={Button} my={'-1.5rem'} display={'flex'} size={'xl'} colorScheme='blue' p={2} alignItems={'center'} iconSpacing={{base:0, sm:1}} rightIcon={<IoIosArrowDown />} >
+        <MenuButton w={{base:'10rem', sm:'15rem'}} textAlign={'left'} as={Button} mb={'-3rem'} display={'flex'} size={'xl'} colorScheme='blue' p={2} alignItems={'center'} iconSpacing={{base:0, sm:1}} rightIcon={<IoIosArrowDown />} >
           <Text display={{base:'none',sm:'inline'}} fontWeight={'bold'}>Sort by: </Text>
           <Text display={'inline'} fontFamily={'Times-New-Roman'} fontWeight={'thin'}>{sortstatus.current}</Text>
         </MenuButton>
           <RadioGroup defaultValue={value} onChange={setValue} value={value}>
             <Stack p={2}>
-              <MenuList mr={{base:'8rem', sm:0}} flexDirection={'column'} w={''} >
+              <MenuList flexDirection={'column'} w={''} >
           {
             params.map((p) => 
               <Container  key={p.value}  onClick={() => handleClick(p.title, p.key, p.direction, p.value)} >
@@ -236,7 +222,7 @@ const Homepage = () => {
         placeItems={{base:'center', md:'left'}}
       >
         {
-          getSortedProducts(products).map((product) => {
+          getSortedProducts(products,searchval, sortKey, rangeVal).map((product) => {
           return (
             <ProductCard key={product._id} product={product} />
           )}

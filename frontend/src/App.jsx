@@ -8,6 +8,7 @@ import Navbar from './components/navbar'
 import { useColorModeValue } from '@chakra-ui/react'
 import { useProductStore } from './store/product.js'
 import { useEffect, useState } from 'react'
+import Favouritepage from './pages/favouritepage.jsx'
 
 
 
@@ -19,9 +20,9 @@ function App() {
     <Box  marginX={{base:'-2' , lg:'-5', xl:'-10'}} minW={'sm'} minH={'100vh'} bg={useColorModeValue("gray.100", "gray.900")}>
       <Navbar />
       <Routes>
-        <Route path='/' element={
-          <Homepage />} />
+        <Route path='/' element={<Homepage />} />
         <Route path='/create' element={<Createpage />} />
+        <Route path='/fav' element={<Favouritepage />} />
       </Routes>
     </Box>
   ) 

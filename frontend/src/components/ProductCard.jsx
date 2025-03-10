@@ -8,11 +8,10 @@ import { Box, Modal, Image, Heading,
      LightMode,
       } from "@chakra-ui/react"
 import {FiEdit} from "react-icons/fi"
-import {FaTrashCan} from "react-icons/fa6"
+import {FaTrash} from "react-icons/fa6"
 import { useProductStore } from "../store/product"
 import { useState } from "react"
 import Deletealert from "./deletealert"
-import { time } from "framer-motion"
 import Newbadge from './newbadge'
 import { GoHeart, GoHeartFill } from "react-icons/go"
 
@@ -90,7 +89,7 @@ const ProductCard = ({product}) => {
 
     const textColor = useColorModeValue("gray.600", "gray.200")
     const bg = useColorModeValue("white", "gray.800")
-    const heart = useColorModeValue('#F6E05E', "#D69E2E")
+    const heart = useColorModeValue('#D69E2E', "#ECC94B")
 
   return (
     <Box 
@@ -130,7 +129,7 @@ const ProductCard = ({product}) => {
         </Text>
         <HStack spacing={2} position={'absolute'} display={{base:'flex', md:''}} bottom={2} right={{base:'', md:'2', lg:'3' }} justify={{base:'space-between'}} minW={{base:'18rem', md:'20rem', lg:'full'}} >
             <IconButton icon={<FiEdit />} ml={{base:'0', md:'auto'}} onClick={onOpen} colorScheme="blue"/>
-            <IconButton icon={<FaTrashCan />} onClick={onDeleteOpen} colorScheme="red"/>
+            <IconButton icon={<FaTrash />} onClick={onDeleteOpen} colorScheme="red"/>
             <Deletealert isOpen={isDeleteOpen} onClose={onDeleteClose} product={product} updatedProduct={updatedProduct}/>
         </HStack>    
 
