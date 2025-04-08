@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import {useAuth} from '../auth/auth'
 
+const url = 'https://product-store-back.onrender.com';  
+// const url = 'http://localhost:8002'
+
 const useSignUp = () => {
   
     const {login} = useAuth()
@@ -15,7 +18,7 @@ const useSignUp = () => {
         try{
             setError(null)
             setLoading(true)
-            const res = await fetch('http://localhost:8002/api/auth/signup', {
+            const res = await fetch(`${url}/api/auth/signup`, {
                 method: "POST",
                 headers: {
                     "Content-Type" : "application/json"

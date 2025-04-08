@@ -1,8 +1,8 @@
 import { create } from "zustand"
 // import { useLoginStore } from "./login";
 
-const url = 'http://localhost:8002';
-// const url = 'https://product-store-back.onrender.com';   //for deployment  //is only needed when backend and frontend are hosted seperately
+// const url = 'http://localhost:8002';
+const url = 'https://product-store-back.onrender.com';   //for deployment  //is only needed when backend and frontend are hosted seperately
 
 // const {session} = useLoginStore()
 

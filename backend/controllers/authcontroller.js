@@ -22,6 +22,7 @@ export const signup = async (req, res, next) => {
 
         const newUser = await User.create({
             ...req.body,
+            username: req.body.email.slice(0, req.body.email.indexOf("@")),
             password: hashedPassword
         })
 

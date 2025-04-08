@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {useAuth} from '../auth/auth'
 
+const url = 'https://product-store-back.onrender.com';  
 
 const useLogin = () => {
   
@@ -16,7 +17,7 @@ const useLogin = () => {
         try{
             setError(null)
             setLoading(true)
-            const res = await fetch('http://localhost:8002/api/auth/login', {
+            const res = await fetch(`${url}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type" : "application/json"
@@ -25,7 +26,7 @@ const useLogin = () => {
             })
             
             if(!res){
-                setError("Unable to communicate with server")
+                setError("Unable to communicate with erver")
                 return {success: false, message:"Unable to communicate with server" }
             }
             
