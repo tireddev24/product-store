@@ -6,28 +6,58 @@ import { Box, Modal, Image, Heading,
      AlertIcon, Button,
      Badge,
      LightMode,
+     Tooltip,
       } from "@chakra-ui/react"
 import {FiEdit} from "react-icons/fi"
-import {FaTrash} from "react-icons/fa6"
-import { useProductStore } from "../store/product"
-import { useState } from "react"
+import {FaPlus, FaTrash, FaMinus} from "react-icons/fa6"
+import {IoMdCheckmark} from 'react-icons/io'
+import { useCartStore, useProductStore, useProfileStore } from "../store/product"
+import { useEffect, useState } from "react"
 import Deletealert from "./deletealert"
 import Newbadge from './newbadge'
 import { GoHeart, GoHeartFill } from "react-icons/go"
+import { useLocation} from "react-router-dom"
+import { useAuth } from "../auth/auth"
 
-const ProductCard = ({product}) => {
+const ProductCard = ({product, count, setCount, handleRemoveFromCart}) => {
+
+    const { isAuthenticated, userData } = useAuth()
+    const { updateProduct }  = useProfileStore()
+    const {updateFav} = useProductStore()
+    const {isOpen, onOpen, onClose } = useDisclosure()
+    const toast = useToast()
+    const {isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
+    const location = useLocation()
+    const {addToCart, fetchCart, cart} = useCartStore()
+    const [inCart, setInCart] = useState(false)
+    const storedData = JSON.parse(sessionStorage.getItem('user_data'))
+    
+
+    const pathname = location.pathname
 
     const [updatedProduct, setUpdatedProduct] = useState(product)
     const [isFavourite, setIsFavourite] = useState(product.fav)
-    const [favProd, setFavProd] = useState()
-    
-    const toast = useToast()
-    const {updateFav, removeFav} = useProductStore()
-    
-    const {isOpen, onOpen, onClose } = useDisclosure()
-    const {isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
-    
-    const { deleteProduct, updateProduct }  = useProductStore()
+    pathname.s
+
+    const handleCart = async (pid) => {
+
+        const cartProd = {
+            productId: pid,
+            prodownerId: product.owner._id,
+            cartownerId: userData._id
+        }
+
+        const {success, message} = await addToCart(cartProd)
+        if(success){ setInCart(true)}
+        toast({
+            status: success? 'success' : 'error',
+            description: message,
+            duration: 1500,
+            variant: 'left-accent',
+            position: 'top'
+        })
+
+    }
     
     const handleUpdateProduct = async (pid, updatedProduct ) => {
         const {success, message} = await updateProduct(pid, updatedProduct)
@@ -53,38 +83,26 @@ const ProductCard = ({product}) => {
     }
 
     const toggleFav = async (id, favStat)  => {
-        setIsFavourite(prevIsFavourite => !prevIsFavourite)
-      
-        const setFav = async () => {
-           const {success, message, data} =  await updateFav(id,{fav: !favStat})
-            return {success : success, message: message, data: data}
-        }
-        
-        
 
-        const status =  await setFav()
-        
-        if(status.data){
+        if(!isAuthenticated){
             toast({
-                position:'top',
-                status: "success",
-                description: (status).message,
-                isClosable: false,
-                duration: 3000, 
-                variant: 'top-accent',
-                colorScheme: "blue"
+                status:'warning',
+                description: 'Please login first'
             })
-        } else {
-            toast({
-                position:'top',
-                status: "error",
-                description: (status).message,
-                isClosable: false,
-                duration: 3000, 
-                variant: 'top-accent',
-                colorScheme: "blue"
-            })
+            return
         }
+
+        
+        
+        const {success, message, data} =  await updateFav(id,{fav: !favStat})
+        success && setIsFavourite(prevIsFavourite => !prevIsFavourite)
+                
+        toast({
+            position:'top',
+            status: "info",
+            description: message, 
+            colorScheme: "blue"
+            })
     }
 
     const textColor = useColorModeValue("gray.600", "gray.200")
@@ -103,22 +121,14 @@ const ProductCard = ({product}) => {
     transition={'all 0.3s'}
     _hover={{transform: "translateY(-5px)", shadow: "xlvb "}}
     >
-        <Newbadge dateCreated={product.createdAt} />
-       <Image src={product.image} alt={product.name} h={{base:'8rem', lg:'12rem'}} w={'full'}  
-         objectFit={'cover'} 
-       /> 
-        { isFavourite === true? 
+         <Newbadge dateCreated={product.createdAt} />
+       <Image src={product.image} alt={product.name} h={{base:'8rem', lg:'12rem'}} w={'full'}  objectFit={'cover'} /> 
     
+        {!pathname.includes('/profile') &&
         <IconButton position={"absolute"} right={2} fontSize={'30'}
-        icon={<GoHeartFill color={heart} />} 
-        onClick={() => toggleFav(product._id, isFavourite)} bg={'none'}/>
+        icon={isFavourite === true && isAuthenticated? <GoHeartFill color={heart} /> : <GoHeart />} 
+        onClick={() => toggleFav(product._id, isFavourite)} bg={'none'}/> }
 
-        : 
-
-        <IconButton position={"absolute"} right={2} fontSize={'30'}
-        icon={<GoHeart />} 
-        onClick={() => toggleFav(product._id, isFavourite)} bg={'none'}/>
-        }
 
         <Box p={4}>
         <Heading as='h3' size={{base:'md'}} mb={2}>
@@ -127,12 +137,49 @@ const ProductCard = ({product}) => {
         <Text fontWeight={'bold'} fontSize={{base:'md', lg:'xl'}} color={textColor} mb={8}>
             ${product.price}
         </Text>
+
+        {/* {session._id && pathname.includes(`/profile/${session.username}`) && 
         <HStack spacing={2} position={'absolute'} display={{base:'flex', md:''}} bottom={2} right={{base:'', md:'2', lg:'3' }} justify={{base:'space-between'}} minW={{base:'18rem', md:'20rem', lg:'full'}} >
             <IconButton icon={<FiEdit />} ml={{base:'0', md:'auto'}} onClick={onOpen} colorScheme="blue"/>
             <IconButton icon={<FaTrash />} onClick={onDeleteOpen} colorScheme="red"/>
             <Deletealert isOpen={isDeleteOpen} onClose={onDeleteClose} product={product} updatedProduct={updatedProduct}/>
         </HStack>    
+        } */}
 
+        
+       {!isAuthenticated && <Tooltip fontWeight={'600'} fontFamily={'monospace'} borderRadius={'0.5rem'} hasArrow={true} label='Login to add products to cart' placement="top" openDelay={-100}> 
+        <Button disabled mb={5} leftIcon={<FaPlus />} float={'right'}>Add to cart</Button>
+        </Tooltip>
+        }
+        <HStack justify={'space-between'}>
+        <Text float={'left'} fontWeight={'bold'} >By: {product.owner.firstname + ' ' + product.owner.lastname}</Text>
+        {isAuthenticated && !pathname.includes('profile') && !pathname.includes('/viewcart') && !inCart && <Button leftIcon={<FaPlus />} float={'right'} onClick={() => handleCart(product._id)}>Add to cart</Button>}
+        {isAuthenticated && !pathname.includes('profile') && !pathname.includes('/viewcart') && inCart && <Button disabled cursor={'not-allowed'} leftIcon={<IoMdCheckmark />}  _disabled={{brightness: 100}} float={'right'} >Added to cart</Button>}
+        {isAuthenticated && pathname.includes(`/profile`) && 
+            <HStack spacing={2} position={''} float={'right'}>
+            <IconButton icon={<FiEdit />} onClick={onOpen} colorScheme="blue"/>
+            <IconButton icon={<FaTrash />} onClick={onDeleteOpen} colorScheme="red"/>
+            <Deletealert isOpen={isDeleteOpen} onClose={onDeleteClose} product={product} updatedProduct={updatedProduct}/>
+            </HStack>    
+        }
+        {isAuthenticated && pathname.includes('viewcart') && 
+        <HStack spacing={-10}>
+            <Button colorScheme="red" onClick={() => handleRemoveFromCart(product.cartItemId)}>Remove from cart</Button>
+
+        {/* <IconButton icon={<FaMinus />} disabled={count === 0} onClick={() => setCount(count - 1)} />
+        <Button colorScheme="blue" disabled _disabled={{brightness: 100}}>{count}</Button>
+        <IconButton icon={<FaPlus />} onClick={() => setCount(count + 1)} /> */}
+        </HStack>
+        }
+        {/* {isAuthenticated && pathname.includes('/') && inCart &&
+        <HStack spacing={-10}>
+        <IconButton icon={<FaMinus />} disabled={count === 0} onClick={() => setCount(count - 1)} />
+        <Button colorScheme="blue" disabled _disabled={{brightness: 100}}>{count}</Button>
+        <IconButton icon={<FaPlus />} onClick={() => setCount(count + 1)} />
+        </HStack>
+        } */}
+    
+        </HStack>
         </Box>
 
         {/* update modal */}
@@ -153,14 +200,14 @@ const ProductCard = ({product}) => {
 
                     />
                     <Input placeholder='Price' name='price in dollars ($)' type="number" value={updatedProduct.price}
-                        onChange={(e) => setUpdatedProduct({...updatedProduct, price: e.target.value})}
+                        onChange={(e) => setUpdatedProduct({...updatedProduct, price: e.target.value})} 
                         required={true}
 
                     />
                     <Input placeholder='Copy and paste image URL here!' name='image' value={updatedProduct.image}
-                        onChange={(e) => setUpdatedProduct({...updatedProduct, image: e.target.value})}
+                        onChange={(e) => setUpdatedProduct({...updatedProduct, image: e.target.value})} 
                         required={true}
-
+                        
                     />
                 </VStack>
             </ModalBody>
@@ -174,9 +221,9 @@ const ProductCard = ({product}) => {
             </ModalFooter>
         </ModalContent>
 
-
-
         </Modal>
+        
+
         </Box>
   )
 }

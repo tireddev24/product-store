@@ -9,33 +9,28 @@ import {
     Button,
     AlertDialogCloseButton,
     LightMode,
+    useToast,
   } from '@chakra-ui/react'
   import { useProductStore } from "../store/product"
 
 
 function Deletealert({product, isOpen, onClose}) {
 
+    const toast = useToast()
+
     const {deleteProduct} = useProductStore()
 
-        const handleDeleteProduct = async (pid) => {
-            const {success, message} = await deleteProduct(pid)
-            if(!success){
-                toast({
-                    title: "Error",
-                    description: message,
-                    status: "error",
-                    isClosable: false
-                })
-            } else {
-                toast({
-                    title: "Success",
-                    description: message,
-                    status: "success",
-                    isClosable: true,
-                    duration: 3000
-                })
-            }
-        }
+    const handleDeleteProduct = async (pid) => {
+      const {success, message} = await deleteProduct(pid)
+
+       toast({
+          status: success? "success" : "error",
+          description: message,
+          
+        })
+          
+     }
+    
 
         
   return (

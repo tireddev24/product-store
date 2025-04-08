@@ -2,8 +2,10 @@ import Product from '../models/product.model.js'
 import mongoose from 'mongoose'
 
 export const getProducts = async (req, res) => {
+
+
     try{
-        const products = await Product.find({})
+        const products = await Product.find({}).populate('owner')
         res.status(200).json({success: true, data: products})
     } catch ( error) {
         console.log("error in fetching products: ", error.message)
@@ -14,6 +16,10 @@ export const getProducts = async (req, res) => {
 export const getSearchedProduct = async (req, res) => {
 
     const {id} = req.params
+
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(400).json({success: false, message: "Invalid Product Id"})
+    }
 
     try {
         const products = await Product.find({_id: id})
@@ -26,9 +32,14 @@ export const getSearchedProduct = async (req, res) => {
 
 export const createProduct = async (req, res)=> {
     const product = req.body
+
+    if(!product.owner){
+        return res.status(401).json({success: false, message: "Please login first"})
+    }
     if(!product.name || !product.price || !product.image){
         return res.status(400).json({success: false, message: "Please provide all fields"})
     }
+
     const newProduct = new Product(product)
 
     try {
@@ -46,12 +57,16 @@ export const updateProduct = async (req, res) => {
     const product = req.body
 
     if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({success: false, message: "Invalid Product Id"})
+        return res.status(400).json({success: false, message: "Invalid Product Id"})
     }
 
     try {
-        const updatedProduct = await Product.findByIdAndUpdate(id, product, {new:true});
-        res.status(200).json({  success: true, data: updatedProduct, message: "Product successfully updated" });
+        const updatedProduct = await Product.findByIdAndUpdate(id, product, {new:true}).populate('owner')
+        console.log(updatedProduct)
+        res.status(200).json({  success: true, 
+            data: updatedProduct,
+            
+        message: "Product successfully updated" });
     } catch (error) {
         res.status(500).json({  success: false, message: "Server Error" });
     }
@@ -81,7 +96,7 @@ export const updateFav = async (req, res) => {
     const favStat = req.body
 
     if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({success: false, message: "Invalid Product Id"})
+        return res.status(400).json({success: false, message: "Invalid Product Id"})
     }
 
     try {
@@ -98,3 +113,45 @@ export const updateFav = async (req, res) => {
 
 }
 
+
+export const profileProducts = async (req, res) => {
+    
+    const {id} = req.params
+
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(400).json({success: false, message: "Invalid Product Id"})
+    }
+
+    try{
+        const prod = await Product.find({owner: id}).populate('owner')
+
+        return res.status(200).json({
+            success: true,
+            message: "Successfully fetched products",
+            product: prod.map(product => {
+                return {
+                    _id:product._id,
+                    name: product.name,
+                    image: product.image,
+                    price: product.price,
+                    createdAt: product.createdAt,
+                    updatedAt: product.updatedAt,
+                    owner: {
+                        _id: product.owner._id, 
+                        firstname: product.owner.firstname,
+                        lastname:product.owner.lastname,
+                        email: product.owner.email
+                    } 
+                }
+            })
+         
+        })
+    }
+
+    catch (error){
+        console.log(error)
+        return res.status(500).json({success: false, message: "Unable to fetch products"})
+    }
+
+
+}

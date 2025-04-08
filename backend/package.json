@@ -9,14 +9,22 @@
     "start": "node server.js"
   },
   "type": "module",
-  "keywords": ["products", "store", "productstore", "product" ],
+  "keywords": [
+    "products",
+    "store",
+    "productstore",
+    "product",
+    "onlinestore"
+  ],
   "author": "Michael Amao",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.9.5"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.12.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
