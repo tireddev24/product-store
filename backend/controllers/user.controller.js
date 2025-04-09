@@ -1,5 +1,7 @@
 import User from '../models/user.model.js'
 import mongoose from 'mongoose'
+import { connectDB } from '../config/db.js';
+
 
 export const createUser = async (req, res) => {
 
@@ -14,6 +16,8 @@ export const createUser = async (req, res) => {
     
     // return
     try {
+
+        await connectDB()
 
         const data = await User.findOne({email: newUserData.email})
         // console.log(data)
@@ -37,6 +41,8 @@ export const loginUser = async (req, res) => {
     const {email: user_email, password:user_password} = req.body   
 
     try {
+        await connectDB()
+
         const userData = await User.findOne({email: user_email})
 
         if(!userData){
@@ -59,8 +65,11 @@ export const isUserNameAvailable = async (req, res) => {
     const {username} = req.body
 
     try {
+
+        await connectDB()
+
         const data = await User.findOne({username: username})
-        console.log(data)
+        
         if(data){
             return res.status(400).json({success: false, message: "Username is already in use!"})
         }
@@ -80,6 +89,8 @@ export const getUser = async (req, res) => {
     }
 
     try {
+        await connectDB()
+
         const user = await User.findById(id)
 
         if(!user){
@@ -96,6 +107,8 @@ export const getUser = async (req, res) => {
 export const getAllUsers =  async (req, res) => {
 
     try{
+        await connectDB()
+
         const users = await User.find({})
         res.status(200).json({success: true, data: users, message: "Users found"})
     } catch (error) {

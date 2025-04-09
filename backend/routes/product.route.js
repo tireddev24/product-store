@@ -17,6 +17,8 @@ router.put("/:id", updateProduct )
 
 router.put("/profile/edit/:id", updateProduct )
 
+router.delete("/profile/delete/:id", deleteProduct )
+
 
 router.put("/fav/:id", updateFav )
 

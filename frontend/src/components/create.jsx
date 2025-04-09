@@ -7,7 +7,7 @@ import { Box, Button, Container, Heading,
     DarkMode} from "@chakra-ui/react";
 
 
-const Createpage = ({handleAddProduct,setNewProduct,handleref, newProduct, nameref, priceref, imageref}) => {
+const Create = ({handleAddProduct, setNewProduct, handleref, newProduct, nameref, priceref, imageref}) => {
 
   return (
     <Container maxW={"container.sm"} mt={8}>
@@ -69,4 +69,4 @@ const Createpage = ({handleAddProduct,setNewProduct,handleref, newProduct, namer
   )
 }
 
-export default Createpage
+export default Create

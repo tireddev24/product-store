@@ -1,10 +1,13 @@
 import Product from '../models/product.model.js'
+import { connectDB } from '../config/db.js';
 import mongoose from 'mongoose'
 
 export const getProducts = async (req, res) => {
 
 
     try{
+        await connectDB()
+        
         const products = await Product.find({}).populate('owner')
         res.status(200).json({success: true, data: products})
     } catch ( error) {
@@ -22,6 +25,8 @@ export const getSearchedProduct = async (req, res) => {
     }
 
     try {
+                await connectDB()
+        
         const products = await Product.find({_id: id})
         res.status(200).json({success: true, data: products})
     } catch (error) {
@@ -43,6 +48,8 @@ export const createProduct = async (req, res)=> {
     const newProduct = new Product(product)
 
     try {
+        await connectDB()
+        
         await newProduct.save()
         res.status(201).json({success: true, data: newProduct, message: "New Product created!"})
     } catch (error) {
@@ -61,6 +68,8 @@ export const updateProduct = async (req, res) => {
     }
 
     try {
+        await connectDB()
+        
         const updatedProduct = await Product.findByIdAndUpdate(id, product, {new:true}).populate('owner')
         console.log(updatedProduct)
         res.status(200).json({  success: true, 
@@ -80,6 +89,8 @@ export const deleteProduct = async (req, res) => {
     }
 
     try {
+        await connectDB()
+
         await Product.findByIdAndDelete(id)
         res.status(200).json({success: true, message: "Product deleted"})
     } catch (error) {
@@ -123,6 +134,8 @@ export const profileProducts = async (req, res) => {
     }
 
     try{
+        await connectDB()
+
         const prod = await Product.find({owner: id}).populate('owner')
 
         return res.status(200).json({

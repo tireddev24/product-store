@@ -11,14 +11,15 @@ import {
     LightMode,
     useToast,
   } from '@chakra-ui/react'
-  import { useProductStore } from "../store/product"
+  import { useProductStore, useProfileStore } from "../store/product"
 
 
 function Deletealert({product, isOpen, onClose}) {
 
     const toast = useToast()
+    
 
-    const {deleteProduct} = useProductStore()
+    const {deleteProduct} = useProfileStore()
 
     const handleDeleteProduct = async (pid) => {
       const {success, message} = await deleteProduct(pid)
@@ -26,9 +27,9 @@ function Deletealert({product, isOpen, onClose}) {
        toast({
           status: success? "success" : "error",
           description: message,
-          
         })
-          
+      
+          onClose()
      }
     
 

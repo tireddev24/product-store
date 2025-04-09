@@ -1,12 +1,10 @@
 import { useState } from 'react'
 import {useAuth} from '../auth/auth'
 
-const url = 'https://product-store-back.onrender.com';  
-// const url = 'http://localhost:8002'
 
 const useSignUp = () => {
   
-    const {login} = useAuth()
+    const {login, url} = useAuth()
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(null)
 

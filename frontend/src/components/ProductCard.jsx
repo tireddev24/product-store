@@ -156,7 +156,7 @@ const ProductCard = ({product, count, setCount, handleRemoveFromCart}) => {
         {isAuthenticated && !pathname.includes('profile') && !pathname.includes('/viewcart') && !inCart && <Button leftIcon={<FaPlus />} float={'right'} onClick={() => handleCart(product._id)}>Add to cart</Button>}
         {isAuthenticated && !pathname.includes('profile') && !pathname.includes('/viewcart') && inCart && <Button disabled cursor={'not-allowed'} leftIcon={<IoMdCheckmark />}  _disabled={{brightness: 100}} float={'right'} >Added to cart</Button>}
         {isAuthenticated && pathname.includes(`/profile`) && 
-            <HStack spacing={2} position={''} float={'right'}>
+            <HStack spacing={2} position={''} float={'right'}d>
             <IconButton icon={<FiEdit />} onClick={onOpen} colorScheme="blue"/>
             <IconButton icon={<FaTrash />} onClick={onDeleteOpen} colorScheme="red"/>
             <Deletealert isOpen={isDeleteOpen} onClose={onDeleteClose} product={product} updatedProduct={updatedProduct}/>

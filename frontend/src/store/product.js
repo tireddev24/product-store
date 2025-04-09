@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { profileProducts } from "../../../backend/controllers/product.controller";
 // import { useLoginStore } from "./login";
 
 // const url = 'http://localhost:8002';
@@ -35,7 +36,19 @@ export const useProfileStore = create((set) => ({
         }))
         // console.log(profileProducts)
         return {success: data.success, message: data.message}
-    }
+    },
+    deleteProduct: async (pid) => {
+        const res = await fetch(`${url}/api/products/profile/delete/${pid}`, {
+            method: "DELETE"
+        })
+        const data = await res.json()
+        if(!data.success) return { success: false, message: data.message}
+        
+        
+        //updates UI immediately without refresh
+        set(state => ({profileProducts: state.profileProducts.filter(product => product._id !== pid)}))
+        return {success: true, message: data.message}
+},
 }))
 
 export const useCartStore = create((set) => ({

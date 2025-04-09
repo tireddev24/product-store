@@ -3,6 +3,8 @@ import { useContext, createContext, useState, useEffect } from 'react'
 import { redirect, useNavigate } from 'react-router-dom';
 
 const AuthContext =  createContext();
+const url = 'https://product-store-back.onrender.com';  
+// const url = 'http://localhost:8002'
 
 export const AuthProvider = ({children}) => {
     const [token, setToken] = useState(null)
@@ -41,7 +43,7 @@ export const AuthProvider = ({children}) => {
     }
 
 
-    return <AuthContext.Provider value={{token, isAuthenticated, login, logout, userData, sessionTime}}>
+    return <AuthContext.Provider value={{token, isAuthenticated, login, logout, userData, url, sessionTime}}>
         {children}
     </AuthContext.Provider>
 }

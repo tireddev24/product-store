@@ -12,7 +12,6 @@ import { useCartStore } from "../store/product";
 
 const Navbar = () => {
 
-
     const { isAuthenticated, userData, logout, sessionTime } = useAuth()
     const {cart, fetchCart} = useCartStore()
     const [count, setCount] = useState(0)
@@ -20,7 +19,7 @@ const Navbar = () => {
     const toast = useToast()
     const [show, setShow] = useState(false)
 
-    const storedData = JSON.parse(localStorage.getItem('user_data'))
+    const storedData = JSON.parse(sessionStorage.getItem('user_data'))
 
     const {colorMode, toggleColorMode} = useColorMode()
     const [path, setPath] = useState('')
@@ -109,7 +108,7 @@ const Navbar = () => {
         
             {/* {(path.includes('create') || path.includes('fav')) && <Link to={'/'}><Button><BsHouse fontSize={20} /></Button></Link> } */}
             {/* {path.includes('login') && <Link to={'/'}><Button><BsHouse fontSize={20} /></Button></Link> } */}
-            {isAuthenticated && !path.includes('/profile') && <Link to={`/${userData.username}/viewcart`} ><Button _after={{bg:useColorModeValue('gray.300','gray.600'),  top:'-3', justifyContent:'center', h:'22px', w: '22px', rounded:'full', right:'-2', fontWeight:'bold', pos:'absolute', content:`"${count}"`}}><FaShoppingCart fontSize={20}/></Button></Link>}
+            {isAuthenticated && !path.includes('/profile') && <Link to={`/${userData.username}/viewcart`} ><Button _after={{bg: dropdown,  top:'-3', justifyContent:'center', h:'22px', w: '22px', rounded:'full', right:'-2', fontWeight:'bold', pos:'absolute', content:`"${count}"`}}><FaShoppingCart fontSize={20}/></Button></Link>}
             {path.includes('/profile') && <Link to={`/profile/${userData.username}/create`}><Button><BsPlusSquare fontSize={20} /></Button></Link> }
             
             {!path.includes('signup') && !isAuthenticated && <Link to={'/signup'} ><Button display={{base: "none", lg: "block"}} minW={'6rem'}  _hover={{textDecoration: 'underline'}}>Sign up</Button></Link>}

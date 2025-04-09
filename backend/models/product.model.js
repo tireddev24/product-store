@@ -29,7 +29,7 @@ const productSchema = new Schema({
 )
 
 
-const Product = models.Products || model('Products', productSchema)
+const Product = model('Products', productSchema)
 
 
 export default Product

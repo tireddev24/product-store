@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import Cart from "../models/cart.model.js";
 import Product from "../models/product.model.js";
+import { connectDB } from '../config/db.js';
+
+
 
 
 export const getProducts = async (req, res) => {
@@ -12,6 +15,8 @@ export const getProducts = async (req, res) => {
          }
 
     try {
+        await connectDB()
+        
         const prod = await Cart.find({cartowner: id}).populate('cartowner').populate('products').populate('owner')
         
         if(prod.length === 0){
@@ -63,6 +68,8 @@ export const AddCart = async (req, res) => {
     })
 
     try {
+        await connectDB()
+
          await newCart.save()
         const prod =  await Product.findById(productId)
         res.status(200).json({success: true, message: `${prod.name} added to cart`, data: {name: prod.name}})
@@ -85,10 +92,35 @@ export const removeProduct = async (req, res) => {
          }
 
     try {
+        await connectDB()
+
         const prod = await Cart.findByIdAndDelete({_id: id})
         return res.status(200).json({success: true, data:prod, message:"Removed from cart"})
     } catch (error) {
         console.log(error)
         return res.status(500).json({success: false, message: "Unable to remove product from cart"})
+    }
+}
+
+export const allCartedProducts = async (req, res) => {
+
+    try {
+        await connectDB()
+
+        const cart = await Cart.find().populate('cartowner').populate('products').populate('owner')
+
+                
+        if(cart.length === 0){
+            return res.status(200).json({success: true, message: "No products in cart", cart: []})
+        }
+
+        return res.status(200).json({success: true,  message: "Fetched products in cart", cart })
+
+
+        
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({success: false, message: "Unable to get all products in cart"})
+
     }
 }

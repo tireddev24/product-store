@@ -2,12 +2,11 @@ import { useToast } from "@chakra-ui/react";
 import { useRef, useState } from "react"
 import { useProductStore } from "../store/product";
 import { useNavigate } from "react-router-dom";
-import { useLoginStore } from "../store/login";
 import { useAuth } from "../auth/auth";
-import Createpage from "../components/createpage";
+import Create from "../components/create";
 
 
-const Create = () => {
+const CreatePage = () => {
 
     
 const {userData} = useAuth()
@@ -40,7 +39,7 @@ const handleAddProduct = async () => {
             setNewProduct({name:"", price:"", image:""})
             navigate(`/profile/${userData.email}`)
             }
-    }
+}
 
     function handleref () {
         if(!newProduct.name && !newProduct.price && !newProduct.image){
@@ -50,10 +49,9 @@ const handleAddProduct = async () => {
     }
 
 
-
   return (
 
-    <Createpage 
+    <Create
     handleAddProduct= {handleAddProduct}
     setNewProduct={setNewProduct}
     handleref={handleref}
@@ -67,4 +65,4 @@ const handleAddProduct = async () => {
   )
 }
 
-export default Create
+export default CreatePage
