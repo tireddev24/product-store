@@ -1,39 +1,10 @@
-import { Box, Button, Container, Heading, Input, SimpleGrid, Spinner, Text, VStack } from '@chakra-ui/react';
+import { Container, Heading, SimpleGrid, Spinner, Text, VStack } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react'
-import { GoHeart, GoHeartFill } from "react-icons/go";
 import { useProductStore } from '../store/product';
 import ProductCard from '../components/ProductCard';
 import { Link } from 'react-router-dom';
-import { FaChevronLeft } from "react-icons/fa";
 
 function Favouritepage() {
-
-  
-  // const [color, setColor] = useState('')
-
-    
-  // const handleColorChange = (e) => {
-  //   e.preventDefault()
-  //     console.log(e.target.value)
-  //     setColor(e.target.value)
-  // }
-
-  // const handleColorReset = (e) => {
-  //   e.preventDefault()
-  //   setColor('#fff')
-  // }
-
-  // const colorpicker = document.getElementById('colorpicker')
-  // colorpicker.addEventListener('change', (e) => {
-  //   colorpicker.value = e.target.value
-  // })
-
-  // const reset = document.getElementById('reset_button')
-  // reset.addEventListener('click', () => {
-  //   colorpicker.value = "#fff"
-  // })
-
-
 
   const {products, fetchProducts} = useProductStore()
 
@@ -126,10 +97,6 @@ function Favouritepage() {
   }
   </VStack>
 
-       {/* <label for="colorPicker">Select Color:</label>
-            <Input type='color' value={color} rounded={'md'} w={'10rem'} onChange={handleColorChange} />
-            <Button bg={'blue'} onClick={handleColorReset}>Reset</Button> */}
-  
   </Container>
 
   )

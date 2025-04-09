@@ -1,16 +1,16 @@
 
-import { Box, Container } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
-import Create from './pages/Create.jsx'
-import Homepage from './pages/HomePage.jsx'
-import Navbar from './components/navbar'
 import { useColorModeValue } from '@chakra-ui/react'
-import Favouritepage from './pages/Favourite.jsx'
-import Login from './pages/login.jsx'
+import Navbar from './components/navbar'
+import Homepage from './pages/HomePage.jsx'
+import Favouritepage from './pages/FavouritePage.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import Createpage from './components/createpage.jsx'
+import ProfilePage from './pages/ProfilePage.jsx'
 import Cart from './components/cart.jsx'
 import SignUp from './components/signup.jsx'
-import UserProfile from './pages/profile.jsx'
 import Settings from './pages/Settings.jsx'
 
 
@@ -26,11 +26,11 @@ function App() {
       <Routes>
         <Route path='/' element={<Homepage />} />
         <Route path='/fav' element={<Favouritepage />} />
-        <Route path='login' element={<Login />} />
-        <Route path='/profile/:id/create' element={<Create />} />
-        <Route path='/profile/:id' element={<UserProfile />} />
+        <Route path='login' element={<LoginPage />} />
+        <Route path='/profile/:id/create' element={<Createpage />} />
+        <Route path='/profile/:id' element={<ProfilePage />} />
         <Route path='/profile/:id/settings' element={<Settings />} />
-        <Route path='/profile' element={<UserProfile />} />
+        <Route path='/profile' element={<ProfilePage />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/:id/viewcart' element={<Cart />} />
       </Routes>

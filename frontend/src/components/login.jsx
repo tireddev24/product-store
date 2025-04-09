@@ -1,63 +1,13 @@
-import { Box, Button, Container, FormControl, FormLabel, Heading, HStack, Input, position, Text, useColorModeValue, useToast, VStack } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
 import { BsEyeFill, BsEyeSlash } from "react-icons/bs";
-import { FiLogIn } from "react-icons/fi";
-import { useProductStore } from '../store/product';
-import { Link, useNavigate } from 'react-router-dom';
-import useLogin from '../hooks/useLogin';
+import { Box, Button, Container, FormControl, FormLabel, Heading, HStack, Input, Text, useColorModeValue, VStack } from '@chakra-ui/react'
+import { Link } from "react-router-dom";
 import Spin from '../components/spinner';
 
-function Login() {
 
-    const {loading, loginUser} = useLogin()
-
-    const [pass, showPass] = useState(false)
-    const toast = useToast()
-    const navigate = useNavigate()
-
-    const [loginData, setLoginData]  = useState({
-        email: '',
-        username:'',
-        password: ''
-    })
-    const [disabled, setDisabled] = useState(true)
-
-    useEffect(() => {
-        if(loginData.email.includes('@') && loginData.email.includes('.') && loginData.password.length >= 8){
-            setDisabled(false)
-            return
-        } else {
-            setDisabled(true)
-            return
-        }
-    }, [loginData])
-
-    const handleSignIn = async () => {
-
-        if(!loginData.email && !loginData.password){
-            toast({status: 'warning', position: 'top', description: 'Please fill in a fields!'})
-        }
-
-        const{success, message} = await loginUser(loginData)
-        
-        toast({
-                status: success? "success" : "error",
-                position:'top',
-                duration: 1500, 
-                description: message
-            })
-        
-        if(success === true){
-            setLoginData({email: '', username:'', password: ''})
-            navigate("/")
-        }
-    }
-
-
+const Login = ({loading, pass, showPass, loginData, setLoginData, disabled, handleSignIn}) => {
 
   return (
     <Container maxW={'xl'} minH={'100vh'} mt={'10vh'}>
- 
         <VStack pos={'relative'}  w={'full'} spacing={4}  bg={useColorModeValue("white", 'gray.800')} p={6} borderRadius={'md'}>
             <Heading as={'h3'} size={'xl'} bgGradient={"linear(to-r, cyan.400, blue.500)"} bgClip={"text"}>
                 LOGIN TO PRODUCT STORE
@@ -92,8 +42,8 @@ function Login() {
 
             <VStack mt={-5} ><Text >New to Product Store?</Text>
             <Link to={'/signup'} >
-            <Text as={Button}  bgGradient={"linear(to-r, cyan.400, blue.500)"}
-            bgClip={"text"} cursor={'pointer'} fontWeight={'bold'} fontSize={{base: 18, md: 22}} textDecoration={'underline'} > Sign up Here</Text>
+            <Text   bgGradient={"linear(to-r, cyan.400, blue.500)"}
+            bgClip={"text"} cursor={'pointer'} fontWeight={'bold'} fontSize={{base: 18}} textDecoration={'underline'} > Sign up Here</Text>
             </Link>
              </VStack>
             

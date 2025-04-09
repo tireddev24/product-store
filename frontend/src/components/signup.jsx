@@ -137,8 +137,8 @@ const SignUp = () => {
             
             <VStack mt={5} ><Text >Already have an account?</Text>
             <Link to={'/login'} >
-            <Text as={Button}  bgGradient={"linear(to-r, cyan.400, blue.500)"}
-            bgClip={"text"} cursor={'pointer'} fontWeight={'bold'} fontSize={{base: 18, md: 22}} textDecoration={'underline'} > Login Here</Text>
+            <Text  bgGradient={"linear(to-r, cyan.400, blue.500)"}
+            bgClip={"text"} cursor={'pointer'} fontWeight={'bold'} fontSize={{base: 18}} textDecoration={'underline'} > Login Here</Text>
             </Link>
              </VStack>
         </VStack>

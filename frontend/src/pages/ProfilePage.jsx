@@ -7,7 +7,7 @@ import Spin from '../components/spinner'
 import { Link } from 'react-router-dom'
 
 
-const UserProfile = () => {
+const ProfilePage = () => {
 
   const {userData, isAuthenticated} = useAuth()
   const {profileProducts, fetchPersonalProfile} = useProfileStore()
@@ -84,4 +84,4 @@ const UserProfile = () => {
   )
 }
 
-export default UserProfile
+export default ProfilePage
