@@ -6,6 +6,7 @@ import { JWT_SECRET } from "../secrets.js";
 
 
 export const signup = async (req, res) => {
+    
 
     try {
         await connectDB()
@@ -18,8 +19,6 @@ export const signup = async (req, res) => {
         
         const newUser = await User.create({
             ...req.body,
-            email:req.body.email.toLower(),
-            username: req.body.email.slice(0, req.body.email.indexOf("@")),
             password: hashSync(req.body.password, 10)
         })
 
@@ -51,10 +50,12 @@ export const login = async (req, res) => {
 
     const {email, password : user_password} = req.body
 
+    const user_email = email.toLower()
+
     try {
         await connectDB()
         
-        const userData = await User.findOne({email})
+        const userData = await User.findOne({email:user_email})
         
         if(!userData) {
             res.status(404).json({success: false, message: "User not found"})

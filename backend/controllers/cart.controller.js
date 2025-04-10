@@ -20,7 +20,7 @@ export const getProducts = async (req, res) => {
         const prod = await Cart.find({cartowner: id}).populate('cartowner').populate('products').populate('owner')
         
         if(prod.length === 0){
-            return res.status(200).json({success: true, message: "No products in cart", cart: []})
+            return res.status(404).json({success: true, message: "No products in cart", cartLength: 0})
         }
         
         return res.status(200).json({success: true,  message: "Fetched products in cart", 
@@ -49,6 +49,7 @@ export const getProducts = async (req, res) => {
                    
                 }
             }),
+            cartLength: prod.length
             // data: prod
         })
     } catch (error) {

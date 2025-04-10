@@ -1,7 +1,7 @@
 import { create } from "zustand"
 
-// const url = 'http://localhost:8002';
-const url = 'https://product-store-back.onrender.com';   //for deployment  //is only needed when backend and frontend are hosted seperately
+const url = 'http://localhost:8002';
+// const url = 'https://product-store-back.onrender.com';   //for deployment  //is only needed when backend and frontend are hosted seperately
 
 
 export const useProfileStore = create((set) => ({
@@ -57,9 +57,13 @@ export const useCartStore = create((set) => ({
             return {success: false, message: "Unable to reach server"}
         }
 
+        if(res.status === 404){
+            return {success: false, message: "Unable to reach server", cartLength: data.cartLength}
+        }
+
         set({cart: data.cart})
 
-        return { success: data.success, message: data.message, cartLength: data.cart.length}
+        return { success: data.success, message: data.message, cartLength: data.cartLength}
     },
     addToCart: async (cartProduct) => {
 
@@ -80,8 +84,6 @@ export const useCartStore = create((set) => ({
         const data = await res.json()
 
         set((state) => ({cart: [...state.cart, data.cart]}))    
-
-        
 
         return {success: data.success, message: data.message}
 
