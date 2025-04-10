@@ -1,10 +1,8 @@
-import { useToast } from '@chakra-ui/react';
 import { useContext, createContext, useState, useEffect } from 'react'
-import { redirect, useNavigate } from 'react-router-dom';
 
 const AuthContext =  createContext();
-// const url = 'https://product-store-back.onrender.com';  
-const url = 'http://localhost:8002'
+const url = 'https://product-store-back.onrender.com';  
+// const url = 'http://localhost:8002'
 
 export const AuthProvider = ({children}) => {
     const [token, setToken] = useState(null)
