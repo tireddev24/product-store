@@ -50,12 +50,10 @@ export const login = async (req, res) => {
 
     const {email, password : user_password} = req.body
 
-    const user_email = email.toLower()
-
     try {
         await connectDB()
         
-        const userData = await User.findOne({email:user_email})
+        const userData = await User.findOne({email})
         
         if(!userData) {
             res.status(404).json({success: false, message: "User not found"})

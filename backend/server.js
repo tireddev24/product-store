@@ -7,7 +7,10 @@ const app = express()
 
 
 //MIDDLEWARES
-app.use(cors())
+app.use(cors({
+    // origin: 'http://localhost:5173',
+    origin:'https://my-product-store2.onrender.com'
+}))
 app.use(express.json()) //middleware, allows passing of json
 
 

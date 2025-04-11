@@ -41,6 +41,14 @@ const ProductCard = ({product, count, setCount, handleRemoveFromCart}) => {
 
     const handleCart = async (pid) => {
 
+        if(!isAuthenticated){
+            toast({
+                status: "warning",
+                description:"Please Login First"
+            })
+            return
+        }
+
         const cartProd = {
             productId: pid,
             prodownerId: product.owner._id,
@@ -87,12 +95,10 @@ const ProductCard = ({product, count, setCount, handleRemoveFromCart}) => {
         if(!isAuthenticated){
             toast({
                 status:'warning',
-                description: 'Please login first'
+                description: 'Please Login First'
             })
             return
         }
-
-        
         
         const {success, message, data} =  await updateFav(id,{fav: !favStat})
         success && setIsFavourite(prevIsFavourite => !prevIsFavourite)
@@ -147,13 +153,10 @@ const ProductCard = ({product, count, setCount, handleRemoveFromCart}) => {
         } */}
 
         
-       {!isAuthenticated && <Tooltip fontWeight={'600'} fontFamily={'monospace'} borderRadius={'0.5rem'} hasArrow={true} label='Login to add products to cart' placement="top" openDelay={-100}> 
-        <Button disabled mb={5} leftIcon={<FaPlus />} float={'right'}>Add to cart</Button>
-        </Tooltip>
-        }
+       
         <HStack justify={'space-between'}>
         <Text float={'left'} fontWeight={'bold'} >By: {product.owner.firstname + ' ' + product.owner.lastname}</Text>
-        {isAuthenticated && !pathname.includes('profile') && !pathname.includes('/viewcart') && !inCart && <Button leftIcon={<FaPlus />} float={'right'} onClick={() => handleCart(product._id)}>Add to cart</Button>}
+        {!pathname.includes('profile') && !pathname.includes('/viewcart') && !inCart && <Button leftIcon={<FaPlus />} float={'right'} onClick={() => handleCart(product._id)}>Add to cart</Button>}
         {isAuthenticated && !pathname.includes('profile') && !pathname.includes('/viewcart') && inCart && <Button disabled cursor={'not-allowed'} leftIcon={<IoMdCheckmark />}  _disabled={{brightness: 100}} float={'right'} >Added to cart</Button>}
         {isAuthenticated && pathname.includes(`/profile`) && 
             <HStack spacing={2} position={''} float={'right'}>
