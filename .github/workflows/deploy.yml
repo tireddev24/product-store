@@ -1,0 +1,41 @@
+name: Deploy to Azure VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          clientId: ${{ secrets.AZURE_CLIENT_ID }}
+          clientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenantId: ${{ secrets.AZURE_TENANT_ID }}
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to Azure Container Registry
+        run: |
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: Pull Docker Images
+        run: |
+          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/backend:latest
+          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/frontend:latest
+
+      - name: SSH into Azure VM and deploy
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VM_IP }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_PRIVATE_KEY }}
+          script: |
+            docker run -d --name backend -p 3000:3000 ${{ secrets.ACR_NAME }}.azurecr.io/backend:latest
+            docker run -d --name frontend -p 8080:80 ${{ secrets.ACR_NAME }}.azurecr.io/frontend:latest
