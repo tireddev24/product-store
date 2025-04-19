@@ -27,8 +27,8 @@ jobs:
 
       - name: Pull Docker Images
         run: |
-          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/backend:latest
-          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/frontend:latest
+          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/backend:v01
+          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/frontend:v01
 
       - name: SSH into Azure VM and deploy
         uses: appleboy/ssh-action@v0.1.6
@@ -37,5 +37,5 @@ jobs:
           username: ${{ secrets.VM_USERNAME }}
           key: ${{ secrets.VM_PRIVATE_KEY }}
           script: |
-            docker run -d --name backend -p 3000:3000 ${{ secrets.ACR_NAME }}.azurecr.io/backend:latest
-            docker run -d --name frontend -p 8080:80 ${{ secrets.ACR_NAME }}.azurecr.io/frontend:latest
+            docker run -d --name backend -p 3000:3000 ${{ secrets.ACR_NAME }}.azurecr.io/backend:v01
+            docker run -d --name frontend -p 8080:80 ${{ secrets.ACR_NAME }}.azurecr.io/frontend:v01
