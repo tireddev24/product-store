@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+permissions:
+  id-token: write  # This is required to generate the identity token
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
