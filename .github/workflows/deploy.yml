@@ -27,8 +27,8 @@ jobs:
 
       - name: Pull Docker Images
         run: |
-          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/backend:v01
-          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/frontend:v01
+          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/mern-backend:v01
+          docker pull ${{ secrets.ACR_NAME }}.azurecr.io/mern-frontend:v01
 
       - name: SSH into Azure VM and deploy
         uses: appleboy/ssh-action@v0.1.6
