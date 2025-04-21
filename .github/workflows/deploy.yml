@@ -6,7 +6,7 @@ on:
       - master
 
 permissions:
-  id-token: write  # This is required to generate the identity token
+  id-token: write  # Required to generate the identity token
 
 jobs:
   deploy:
@@ -37,5 +37,7 @@ jobs:
           username: ${{ secrets.VM_USERNAME }}
           key: ${{ secrets.VM_PRIVATE_KEY }}
           script: |
+            docker rm -f backend || true
+            docker rm -f frontend || true
             docker run -d --name backend -p 3000:3000 ${{ secrets.ACR_NAME }}.azurecr.io/mern-backend:v01
             docker run -d --name frontend -p 8080:80 ${{ secrets.ACR_NAME }}.azurecr.io/mern-frontend:v01
