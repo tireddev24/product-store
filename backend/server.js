@@ -9,7 +9,7 @@ const app = express()
 //MIDDLEWARES
 app.use(cors({
     // origin: 'http://localhost:5173',
-    origin: 'https://bp8ntrs2-8002.uks1.devtunnels.ms',
+    origin: 'https://bp8ntrs2-5173.uks1.devtunnels.ms',
     // origin:'https://my-product-store2.onrender.com'
 }))
 app.use(express.json()) //middleware, allows passing of json
