@@ -1,39 +1,31 @@
-import express from 'express';
-import cors from 'cors'
-import router from './routes/rootroute.js';
-import { PORT } from './secrets.js';
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import router from "./routes/root.route.js";
+import { PORT } from "./secrets.js";
+import cookieParser from "cookie-parser";
 
-const app = express()
+const app = express();
 
+app.use(express.json());
+
+const corsOptions = {
+  // origin: "http://localhost:5173",
+  origin: "https://bp8ntrs2-5173.uks1.devtunnels.ms", // Replace with your frontend domain
+  credentials: true,
+};
 
 //MIDDLEWARES
-app.use(cors({
-    // origin: 'http://localhost:5173',
-    origin:'https://my-product-store2.onrender.com'
-}))
-app.use(express.json()) //middleware, allows passing of json
-
+app.use(cors(corsOptions));
+app.use(cookieParser());
 
 //ROUTES
-app.use('/api', router)
-//ERROR HANDLER
-app.use((err, req, res, next) => {
-    err.statuCode = err.statuCode || 500
-    err.status = err.status || 'error'
+app.use("/api", router);
 
-    res.status(err.statuCode).json({
-        status: err.status,
-        message: err.message
-    })
-})
-
-
-app.get('/', (req, res) => {
-    res.json({message: "Server is running"})
-})
-
-app.listen(PORT, () => {
-    console.log(`\nServer is running`)
+app.get("/", (req, res) => {
+  res.send({ message: "Server is running" });
 });
 
-
+app.listen(PORT, () => {
+  console.log(`Server is running`);
+});

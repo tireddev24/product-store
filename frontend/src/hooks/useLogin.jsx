@@ -1,68 +1,58 @@
-import { useState } from 'react'
-import {useAuth} from '../auth/auth'
-
+import { useState } from "react";
+import { useAuth } from "../auth/auth";
+import Cookies from "universal-cookie";
 
 const useLogin = () => {
-  
-    const {login, url} = useAuth()
-    const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(null)
+  const { login, url } = useAuth();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(null);
 
-    const loginUser = async (values) => {
-        if(values.password !== values.confirmPassword){
-            setError("Passwords do not match")
-        }
-
-        try{
-            setError(null)
-            setLoading(true)
-            const res = await fetch(`${url}/api/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type" : "application/json"
-                },
-                body: JSON.stringify(values)
-            })
-            
-            if(!res){
-                setError("Unable to communicate with erver")
-                return {success: false, message:"Unable to communicate with server" }
-            }
-            
-            const data = await res.json()
-            
-            if(res.status===200){
-                // message.success(data.message)
-
-                login(data.token, data.user, data.expire)
-
-                return {success: data.success, message: data.message}
-            } else if (res.status === 404) {
-
-                setError(data.message)
-
-                return {success: data.success, message: data.message}
-            } else if(res.status === 401){
-                
-                return {success: data.success, message: data.message}    
-            }else {
-          
-                return {success: data.success, message: "Login failed!"}
-            }
-
-        } catch (error){
-            setError(error.message)
-            return {success: false, message:"Unable to communicate with server" }
-
-        } finally {
-            setLoading(false)
-        }
-
+  const loginUser = async (values) => {
+    if (values.password !== values.confirmPassword) {
+      setError("Passwords do not match");
     }
-    
-    return { loading, error, loginUser}
 
+    try {
+      setError(null);
+      setLoading(true);
+      const res = await fetch(`${url}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+        credentials: "include",
+      });
 
-}
+      if (!res) {
+        setError("Unable to communicate with erver");
+        return { success: false, message: "Unable to commnicate with server" };
+      }
 
-export default useLogin
+      const data = await res.json();
+
+      if (res.status === 200) {
+        login(data.user);
+
+        return { success: data.success, message: data.message };
+      } else if (res.status === 404) {
+        setError(data.message);
+
+        return { success: data.success, message: data.message };
+      } else if (res.status === 401) {
+        return { success: data.success, message: data.message };
+      } else {
+        return { success: data.success, message: "Login failed!" };
+      }
+    } catch (error) {
+      setError(error.message);
+      return { success: false, message: "Unable to communicate with server" };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { loading, error, loginUser };
+};
+
+export default useLogin;

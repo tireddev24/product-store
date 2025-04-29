@@ -1,127 +1,156 @@
 import mongoose from "mongoose";
 import Cart from "../models/cart.model.js";
 import Product from "../models/product.model.js";
-import { connectDB } from '../config/db.js';
+import { connectDB } from "../config/db.js";
+import User from "../models/user.model.js";
 
+export const getCart = async (req, res) => {
+  const userId = req.user.id;
 
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    res.status(400).json({ success: false, message: "Invalid Product Id" });
+    return;
+  }
 
+  try {
+    await connectDB();
 
-export const getProducts = async (req, res) => {
+    const cart = await Cart.find({ cartowner: userId })
+      .populate({ path: "cartowner", select: "email username " })
+      .populate({
+        path: "product",
+        select: "name image price createdAt owner",
+        populate: { path: "owner", select: "username" },
+      });
 
-    const {id} = req.params
-
-    if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(400).json({success: false, message: "Invalid Product Id"})   
-         }
-
-    try {
-        await connectDB()
-        
-        const prod = await Cart.find({cartowner: id}).populate('cartowner').populate('products').populate('owner')
-        
-        if(prod.length === 0){
-            return res.status(404).json({success: true, message: "No products in cart", cartLength: 0})
-        }
-        
-        return res.status(200).json({success: true,  message: "Fetched products in cart", 
-            cart: prod.map(product => {
-                return {
-                    cartItemId:product._id,
-                    _id: product.products._id,
-                    name: product.products.name,
-                    image: product.products.image,
-                    price: product.products.price,
-                    fav: product.products.fav,
-                    createdAt: product.products.createdAt,
-                    updatedAt: product.products.updatedAt,
-                    cartowner: {
-                        _id: product.cartowner._id, 
-                        firstname: product.cartowner.firstname,
-                        lastname:product.cartowner.lastname,
-                        email: product.cartowner.email
-                    },
-                    owner: {
-                        _id: product.owner._id,
-                        firstname: product.owner.firstname,
-                        lastname: product.owner.lastname,
-                        email: product.owner.email
-                    }
-                   
-                }
-            }),
-            cartLength: prod.length
-            // data: prod
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({success: false, message: "Unable to get cart products"})
-    }
-}
+    res.status(200).json({
+      success: true,
+      message: "Fetched products in cart",
+      cart,
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Server Error" });
+    return;
+  }
+};
 
 export const AddCart = async (req, res) => {
+  const userId = req.user.id;
 
-    const {productId, cartownerId, prodownerId} = req.body
+  const prodId = req.params.id;
 
-    const newCart = new Cart({
-        cartowner: cartownerId,
-        products: productId,
-        owner: prodownerId
-    })
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    res.status(400).json({ success: false, message: "Not Authorized" });
+    return;
+  }
 
-    try {
-        await connectDB()
+  if (!mongoose.Types.ObjectId.isValid(prodId)) {
+    res.status(400).json({ success: false, message: "Invalid Product Id" });
+    return;
+  }
 
-         await newCart.save()
-        const prod =  await Product.findById(productId)
-        res.status(200).json({success: true, message: `${prod.name} added to cart`, data: {name: prod.name}})
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({success: false, message: "Unable to add product to cart"})
+  try {
+    await connectDB();
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(400).json({ success: false, message: "User not found" });
+      return;
     }
 
+    console.log(user);
 
-}
+    const prod = await Product.findById(prodId);
 
+    if (!prod) {
+      res.status(400).json({ success: false, message: "Product not found" });
+      return;
+    }
+
+    const inCart = await Cart.findOne({ cartowner: userId, product: prodId });
+
+    if (inCart) {
+      res.status(400).json({
+        success: false,
+        message: "You already added this product to cart.",
+      });
+      return;
+    }
+
+    const newCart = new Cart({ cartowner: userId, product: prodId });
+    await newCart.save();
+
+    user.cartedProducts.push(newCart);
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: `${prod.name} added to cart`,
+      name: prod.name,
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Server Error" });
+    return;
+  }
+};
 
 export const removeProduct = async (req, res) => {
+  const { id } = req.params;
 
-    const {id} = req.params
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400).json({ success: false, message: "Invalid Product Id" });
+    return;
+  }
 
-    
-    if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(400).json({success: false, message: "Invalid Product Id"})   
-         }
+  try {
+    await connectDB();
 
-    try {
-        await connectDB()
+    const inCart = await Cart.findOne({ _id: id });
 
-        const prod = await Cart.findByIdAndDelete({_id: id})
-        return res.status(200).json({success: true, data:prod, message:"Removed from cart"})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({success: false, message: "Unable to remove product from cart"})
+    if (!inCart) {
+      res.status(404).json({ success: false, message: "Product not found" });
+      return;
     }
-}
+
+    const prod = await Cart.findByIdAndDelete({ _id: id });
+
+    res
+      .status(200)
+      .json({ success: true, data: prod, message: "Removed from cart" });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Server Error" });
+    return;
+  }
+};
 
 export const allCartedProducts = async (req, res) => {
+  try {
+    await connectDB();
 
-    try {
-        await connectDB()
+    const cart = await Cart.find()
+      .populate({ path: "cartowner", select: "username email " })
+      .populate({ path: "product", select: "name price image createdAt" });
 
-        const cart = await Cart.find().populate('cartowner').populate('products').populate('owner')
-
-                
-        if(cart.length === 0){
-            return res.status(200).json({success: true, message: "No products in cart", cart: []})
-        }
-
-        return res.status(200).json({success: true,  message: "Fetched products in cart", cart })
-
-
-        
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({success: false, message: "Unable to get all products in cart"})
-
+    if (cart.length === 0) {
+      return res
+        .status(200)
+        .json({ success: true, message: "No products in cart", cart: [] });
     }
-}
+
+    res
+      .status(200)
+      .json({ success: true, message: "Fetched products in cart", cart });
+    return;
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, message: "Server Error" });
+    return;
+  }
+};

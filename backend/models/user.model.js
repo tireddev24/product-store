@@ -1,38 +1,48 @@
 import mongoose from "mongoose";
 
-const {Schema, model, models} = mongoose
+const { Schema, model, models } = mongoose;
 
-const UserSchema = new Schema({
+const UserSchema = new Schema(
+  {
     firstname: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     lastname: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-    email : {
-        type: String,
-        unique: [true, 'Email already exists!'],
-        required: true
+    username: {
+      type: String,
+      required: true,
+      unique: [true, "Username is in use!"],
     },
-    password : {
-        type: String,
-        required: true,
-        // minlength: [8, "Password must be at least 8 characters long"],
-        // match: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).+$/"
-
+    email: {
+      type: String,
+      unique: [true, "Email already exists!"],
+      required: true,
     },
-    username : {
-        type: String,
-        required: true
-        // default: 'user'
-        // unique: [true, 'Username is in use!'],
-    }
-},
-{timestamps: true})
+    password: {
+      type: String,
+      required: true,
+    },
+    favs: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "favourite",
+      },
+    ],
+    products: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Products",
+      },
+    ],
+    cartedProducts: [{ type: Schema.Types.ObjectId, ref: "cart" }],
+  },
+  { timestamps: true }
+);
 
+const User = models.User || model("User", UserSchema);
 
-const User = models.User || model('User', UserSchema)
-
-export default User 
+export default User;

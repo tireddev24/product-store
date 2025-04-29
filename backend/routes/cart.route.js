@@ -1,15 +1,22 @@
-import express from 'express'
-import { AddCart, getProducts, removeProduct, allCartedProducts } from '../controllers/cart.controller.js'
+import { Router } from "express";
+import { verifyJwt } from "../middlewares/jwtverify.js";
+import {
+  AddCart,
+  getCart,
+  removeProduct,
+  allCartedProducts,
+} from "../controllers/cart.controller.js";
 
-const router = express.Router()
+const router = Router();
 
+router.use(verifyJwt);
 
-router.delete('/removefromcart/:id', removeProduct)
+router.delete("/removefromcart/:id", removeProduct);
 
-router.get('/getcart/:id', getProducts)
+router.get("/getcart", getCart);
 
-router.post('/addtocart', AddCart)
+router.post("/addtocart/:id", AddCart);
 
-router.get('/allcart', allCartedProducts)
+router.get("/allcart", allCartedProducts);
 
-export default router
+export default router;

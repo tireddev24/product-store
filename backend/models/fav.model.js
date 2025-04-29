@@ -2,19 +2,19 @@ import mongoose from "mongoose";
 
 const { Schema, model, models } = mongoose;
 
-const CartSchema = new Schema({
+const favSchema = new Schema({
+  favowner: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   product: {
     type: Schema.Types.ObjectId,
     ref: "Products",
     required: true,
   },
-  cartowner: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
 });
 
-const Cart = models.Cart || model("cart", CartSchema);
+const Favourite = models.Favourite || model("favourite", favSchema);
 
-export default Cart;
+export default Favourite;

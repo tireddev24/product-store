@@ -1,37 +1,80 @@
-import {  Button, Container, Heading,SimpleGrid,Text, VStack } from '@chakra-ui/react'
-import ProductCard from '../components/ProductCard'
-import { Link } from 'react-router-dom'
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  SimpleGrid,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import ProductCard from "../components/ProductCard";
+import { Link, Outlet } from "react-router-dom";
+import Spin from "./spinner";
 
-
-const Profile = ({profileProducts, userData }) => {
+const Profile = ({ profileProducts, userData, path, isLoading }) => {
   return (
-    <Container maxW={'container.xl'} minH={'100vh'} mt={'10vh'}>
-      <VStack spacing={10}>
-      <Heading as={'h1'} mt={'-1.5rem'} h={'max-content'} size={{base: 'xl', md:'2xl'}} 
-        bgGradient={"linear(to-tr, cyan.400, blue.500)"} bgClip={"text"} textAlign={"center"}>
-        Welcome to your profile, {userData.firstname}!
-      </Heading>
-      <Link to={`/profile/${userData.email}/create`}><Button alignSelf={{ base:'center', md: 'flex-end'}} colorScheme='blue' cursor={'pointer'} mr={{base:0, md:10}}>Add New</Button></Link>
-      {profileProducts.length > 0 && <Text float={'right'} fontFamily={'monospace'} fontSize={'1.2rem'} fontWeight={'bold'}>You own {profileProducts.length} product(s). </Text>}
-      {profileProducts.length > 0 && <SimpleGrid  columns={{base: 1, md: 2, lg: 3, }} spacing={10} w={'full'} mx={10} placeItems={{base:'center', md:'left'}} >
-        {  
-          profileProducts.map((product) => {
-            return (
-            <ProductCard key={product._id} product={product} />
+    <Container maxW={"container.xl"} mt={{ base: "3rem", md: "5rem" }}>
+      {!path.includes("create") && (
+        <VStack spacing={10}>
+          <Heading
+            as={"h1"}
+            maxW={{ base: "3xl", lg: "full" }}
+            mt={"-1.5rem"}
+            h={"max-content"}
+            size={{ base: "lg", md: "xl" }}
+            bgGradient={"linear(to-tr, cyan.400, blue.500)"}
+            bgClip={"text"}
+            textAlign={"center"}
+          >
+            Welcome to your profile, {userData.username}!
+          </Heading>
+          <Link to={`create`}>
+            <Button colorScheme="blue" cursor={"pointer"}>
+              Create A New Product
+            </Button>
+          </Link>
+
+          {profileProducts.length > 0 && (
+            <Text
+              float={"right"}
+              fontFamily={"monospace"}
+              fontSize={"1.2rem"}
+              fontWeight={"bold"}
+            >
+              You own {profileProducts.length} product(s).{" "}
+            </Text>
           )}
-        )
-      }
-      </SimpleGrid>}
+          {isLoading && <Spin />}
+          {profileProducts.length > 0 && !isLoading && (
+            <SimpleGrid
+              columns={{ base: 1, md: 2, lg: 3 }}
+              w={"full"}
+              spacing={10}
+              minChildWidth={"20rem"}
+              placeItems={{ base: "center", md: "left" }}
+            >
+              {profileProducts.map((product) => {
+                return <ProductCard key={product._id} product={product} />;
+              })}
+            </SimpleGrid>
+          )}
 
-      {profileProducts.length === 0 && 
-                <VStack minH={'50vh'} justify={'center'}>
-                  <Text fontSize={{base: '1.2rem', md:'1.7rem'}} fontWeight={'bold'}>You have not created any product(s).</Text>           
-                </VStack>
-                  }
-      </VStack>
-    
+          {profileProducts.length === 0 && (
+            <VStack mt={10} justify={"center"}>
+              <Text
+                fontSize={{ base: "1.2rem", md: "1.7rem" }}
+                fontWeight={"bold"}
+              >
+                You have not created any product(s).
+              </Text>
+            </VStack>
+          )}
+        </VStack>
+      )}
+      <Outlet />
     </Container>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

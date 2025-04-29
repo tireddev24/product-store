@@ -1,42 +1,87 @@
-
-import { Box } from '@chakra-ui/react'
-import './App.css'
-import { Route, Routes } from 'react-router-dom'
-import { useColorModeValue } from '@chakra-ui/react'
-import Navbar from './components/navbar'
-import Homepage from './pages/HomePage.jsx'
-import Favouritepage from './pages/FavouritePage.jsx'
-import LoginPage from './pages/LoginPage.jsx'
-import CreatePage from './pages/CreatePage.jsx'
-import ProfilePage from './pages/ProfilePage.jsx'
-import Cart from './components/cart.jsx'
-import SignUp from './components/signup.jsx'
-import Settings from './pages/Settings.jsx'
-
-
+import { Box } from "@chakra-ui/react";
+import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import { useColorModeValue } from "@chakra-ui/react";
+import Homepage from "./pages/HomePage.jsx";
+import Favouritepage from "./pages/FavouritePage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import CreatePage from "./pages/CreatePage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
+import Cart from "./components/cart.jsx";
+import Settings from "./pages/Settings.jsx";
+import Rooterror from "./components/error/rooterror.jsx";
+import Landing from "./pages/landing.jsx";
+import Nopage from "./components/error/nopage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import Protected from "./utils/protected.jsx";
 
 function App() {
-
-  
-
   return (
-    <Box  marginX={{base:'-2' , lg:'0'}} minW={'sm'} minH={'100vh'} bg={useColorModeValue("gray.200", "gray.900")}>
-      {/* // <Container minW={'1920px'}> */}
-      <Navbar />
+    <Box
+      minW={"sm"}
+      minH={"100vh"}
+      bg={useColorModeValue("gray.200", "gray.900")}
+    >
       <Routes>
-        <Route path='/' element={<Homepage />} />
-        <Route path='/fav' element={<Favouritepage />} />
-        <Route path='login' element={<LoginPage />} />
-        <Route path='/profile/:id/create' element={<CreatePage />} />
-        <Route path='/profile/:id' element={<ProfilePage />} />
-        <Route path='/profile/:id/settings' element={<Settings />} />
-        <Route path='/profile' element={<ProfilePage />} />
-        <Route path='/signup' element={<SignUp />} />
-        <Route path='/:id/viewcart' element={<Cart />} />
+        <Route path="/" element={<Landing />} errorElement={<Rooterror />}>
+          <Route path="" element={<Homepage />} errorElement={<Rooterror />} />
+          <Route
+            path="signup"
+            element={<SignUpPage />}
+            errorElement={<Rooterror />}
+          />
+          <Route
+            path="login"
+            element={<LoginPage />}
+            errorElement={<Rooterror />}
+          />
+          <Route
+            path="viewcart"
+            element={
+              <Protected>
+                <Cart />
+              </Protected>
+            }
+            errorElement={<Rooterror />}
+          />
+          <Route
+            path="fav"
+            element={
+              <Protected>
+                <Favouritepage />
+              </Protected>
+            }
+            errorElement={<Rooterror />}
+          />
+          <Route
+            path="profile"
+            element={
+              <Protected>
+                <ProfilePage />
+              </Protected>
+            }
+            errorElement={<Rooterror />}
+          >
+            <Route
+              path="create"
+              element={
+                <Protected>
+                  <CreatePage />
+                </Protected>
+              }
+              errorElement={<Rooterror />}
+            />
+            <Route
+              path="settings"
+              element={<Settings />}
+              errorElement={<Rooterror />}
+            />
+          </Route>
+        </Route>
+        <Route path="*" element={<Nopage />} />
       </Routes>
-      {/* </Container> */}
-     </Box> 
-  ) 
+    </Box>
+  );
 }
 
-export default App
+export default App;

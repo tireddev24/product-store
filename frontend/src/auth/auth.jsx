@@ -1,50 +1,57 @@
-import { useContext, createContext, useState, useEffect } from 'react'
+import { useContext, createContext, useState, useEffect } from "react";
 
-const AuthContext =  createContext();
-const url = 'https://product-store-back.onrender.com';  
-// const url = 'http://localhost:8002'
+const AuthContext = createContext();
+const url = "https://product-store-back.onrender.com";
+// const url = "http://localhost:8002";
 
-export const AuthProvider = ({children}) => {
-    const [token, setToken] = useState(null)
-    const [userData, setUserData] = useState(null)
-    const [isAuthenticated, setIsAuthenticated] = useState(null)
-    const [sessionTime, setSessionTime] = useState(null)
-    const storedData = JSON.parse(sessionStorage.getItem('user_data'))
-
-    useEffect(() => {
-        if(storedData){
-            const {userToken, user} = storedData
-            setUserData(user)
-            setToken(userToken)
-            setIsAuthenticated(true)
-
-        }
-    },[])
-
-    const login = (newToken, newData, expireTime) => {
-        sessionStorage.setItem('user_data', JSON.stringify({
-           userToken: newToken,
-            user: newData
-        }))
-
-        setToken(newToken)
-        setUserData(newData)
-        setIsAuthenticated(true)
-        setSessionTime(expireTime)
+export const AuthProvider = ({ children }) => {
+  const [userData, setUserData] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const storedData = (() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("user_data")) || null;
+    } catch (error) {
+      console.error("Error parsing user data from sessionStorage:", error);
+      return null;
     }
+  })();
 
-    const logout = () => {
-        sessionStorage.removeItem('user_data')
-        setToken(null)
-        setUserData(null)
-        setIsAuthenticated(false)
+  useEffect(() => {
+    if (storedData) {
+      const { user } = storedData;
+      setUserData(user);
+      setIsAuthenticated(true);
     }
+  }, []);
 
+  const login = (newData) => {
+    sessionStorage.setItem(
+      "user_data",
+      JSON.stringify({
+        user: newData,
+      })
+    );
 
-    return <AuthContext.Provider value={{token, isAuthenticated, login, logout, userData, url, sessionTime}}>
-        {children}
+    setUserData(newData);
+    setIsAuthenticated(true);
+  };
+
+  const logout = () => {
+    sessionStorage.removeItem("user_data");
+    setUserData(null);
+    setIsAuthenticated(false);
+    setTimeout(() => {
+      window.location.replace("/");
+    }, 950);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, userData, url }}
+    >
+      {children}
     </AuthContext.Provider>
-}
+  );
+};
 
-
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);

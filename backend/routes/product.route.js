@@ -1,28 +1,33 @@
-import express from 'express'
+import { Router } from "express";
+import { verifyJwt } from "../middlewares/jwtverify.js";
 
-import { createProduct, getProducts, updateProduct,
-     deleteProduct, getSearchedProduct, updateFav, profileProducts } from '../controllers/product.controller.js';
+import {
+  createProduct,
+  getProducts,
+  updateProduct,
+  deleteProduct,
+  getSearchedProduct,
+  profileProducts,
+} from "../controllers/product.controller.js";
 
-const router = express.Router()
+const router = Router();
 
-router.get("/", getProducts)
+router.get("/", getProducts);
 
-router.get("/search/:id", getSearchedProduct)
+router.get("/search/:id", getSearchedProduct);
 
-router.get('/profile/:id', profileProducts)
+router.use(verifyJwt);
 
-router.post("/create", createProduct )
+router.get("/profile", profileProducts);
 
-router.put("/:id", updateProduct )
+router.post("/create", createProduct);
 
-router.put("/profile/edit/:id", updateProduct )
+router.put("/:id", updateProduct);
 
-router.delete("/profile/delete/:id", deleteProduct )
+router.put("/profile/edit/:id", updateProduct);
 
+router.delete("/profile/delete/:id", deleteProduct);
 
-router.put("/fav/:id", updateFav )
+router.delete("/:id", deleteProduct);
 
-router.delete("/:id", deleteProduct )
-
-
-export default router
+export default router;

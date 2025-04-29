@@ -1,50 +1,48 @@
-import React from 'react'
+import React, { useState } from "react";
 import {
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogContent,
-    AlertDialogOverlay,
-    Button,
-    AlertDialogCloseButton,
-    LightMode,
-    useToast,
-  } from '@chakra-ui/react'
-  import { useProductStore, useProfileStore } from "../store/product"
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  Button,
+  AlertDialogCloseButton,
+  LightMode,
+  useToast,
+} from "@chakra-ui/react";
+import { useProductStore, useProfileStore } from "../store/product";
+import Spin from "./spinner";
 
+function Deletealert({ product, isOpen, onClose }) {
+  const toast = useToast();
 
-function Deletealert({product, isOpen, onClose}) {
+  const [loading, setIsLoading] = useState(false);
 
-    const toast = useToast()
-    
+  const { deleteProduct } = useProfileStore();
 
-    const {deleteProduct} = useProfileStore()
+  const handleDeleteProduct = async (pid) => {
+    const { success, message } = await deleteProduct(pid);
 
-    const handleDeleteProduct = async (pid) => {
-      const {success, message} = await deleteProduct(pid)
+    toast({
+      status: success ? "success" : "error",
+      description: message,
+    });
 
-       toast({
-          status: success? "success" : "error",
-          description: message,
-        })
-      
-          onClose()
-     }
-    
+    onClose();
+  };
 
-        
   return (
     <>
-     <AlertDialog
+      <AlertDialog
         isOpen={isOpen}
         onClose={onClose}
-        motionPreset='slideInBottom'
-        isCentered={{base: false, md:true}}
+        motionPreset="slideInBottom"
+        isCentered={{ base: false, md: true }}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent >
-            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
               Delete Product
             </AlertDialogHeader>
 
@@ -53,20 +51,25 @@ function Deletealert({product, isOpen, onClose}) {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={onClose}>
-                Cancel
-              </Button>
+              <Button onClick={onClose}>Cancel</Button>
               <LightMode>
-              <Button colorScheme='red' onClick={() => handleDeleteProduct(product._id)} ml={3}>
-                Delete
-              </Button>
+                <Button
+                  onClick={() => {
+                    setIsLoading(true);
+                    handleDeleteProduct(product._id);
+                  }}
+                  colorScheme={loading ? "none" : "red"}
+                  ml={3}
+                >
+                  {loading ? <Spin /> : "Delete"}
+                </Button>
               </LightMode>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
     </>
-  )
+  );
 }
 
-export default Deletealert
+export default Deletealert;
