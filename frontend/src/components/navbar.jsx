@@ -99,18 +99,21 @@ const Navbar = ({ show, setShow }) => {
           mx={{ base: 2, sm: 0 }}
           my={{ base: "0px", sm: "0px" }}
         >
-          {
-            <Link to={isAuthenticated ? "/fav" : "/login"}>
+          <Link to={"/"}>
+            <Button display={{ base: "none", md: "block" }}>
+              <BsHouse fontSize={20} />
+            </Button>
+          </Link>
+
+          {isAuthenticated && (
+            <Link to={"/fav"}>
               <Button display={{ base: "none", md: "block" }}>
                 {" "}
                 <GoHeartFill size={"20"} />
               </Button>
             </Link>
-          }
-
-          {/* {(path.includes('create') || path.includes('fav')) && <Link to={'/'}><Button><BsHouse fontSize={20} /></Button></Link> } */}
-          {/* {path.includes('login') && <Link to={'/'}><Button><BsHouse fontSize={20} /></Button></Link> } */}
-          {path.includes("profile") && !path.includes("create") && (
+          )}
+          {isAuthenticated && (
             <Link to={`profile/create`}>
               <Button display={{ base: "none", md: "block" }}>
                 <BsPlusSquare fontSize={20} />
@@ -144,7 +147,7 @@ const Navbar = ({ show, setShow }) => {
             <Link to={"signup"}>
               <Button
                 display={{ base: "none", md: "block" }}
-                minW={"6rem"}
+                minW={"6.5rem"}
                 _hover={{ textDecoration: "underline" }}
               >
                 Sign up
@@ -155,7 +158,7 @@ const Navbar = ({ show, setShow }) => {
             <Link to={`login`}>
               <Button
                 display={{ base: "none", sm: "block" }}
-                minW={"rem"}
+                minW={"6.5rem"}
                 colorScheme="cyan"
                 _hover={{ textDecoration: "underline" }}
               >
@@ -195,7 +198,7 @@ const Navbar = ({ show, setShow }) => {
               <Link>
                 {isAuthenticated && userData._id && (
                   <Avatar
-                    size={{ base: "lg", sm: "xl" }}
+                    size={{ base: "md", sm: "xl" }}
                     zIndex={2}
                     name={userData.firstname + " " + userData.lastname}
                   >
@@ -312,36 +315,31 @@ const Navbar = ({ show, setShow }) => {
                       )}
                     </Button>
                   </Link>
-                  {path.includes("profile") && (
-                    <Link to={`profile`}>
-                      <Text _hover={{ textDecoration: "underline" }}>
-                        <Button minW={"6.5rem"} colorScheme="purple">
-                          Profile
-                        </Button>
-                      </Text>
-                    </Link>
-                  )}
-                  {!path.includes("fav") && (
-                    <Link to={`fav`}>
-                      <Button minW={"6.5rem"} colorScheme="purple">
-                        Wishlist
-                      </Button>
-                    </Link>
-                  )}
-                  {!path.includes("viewcart") && (
-                    <Link to={`viewcart`}>
-                      <Button minW={"6.5rem"} colorScheme={"yellow"}>
-                        View Cart
-                      </Button>
-                    </Link>
-                  )}
-                  {!path.includes("profile") && (
-                    <Link to={`profile`}>
-                      <Button minW={"6.5rem"} colorScheme="blue">
-                        My Profile
-                      </Button>
-                    </Link>
-                  )}
+
+                  <Link to={`/`}>
+                    <Button minW={"6.5rem"} colorScheme="cyan">
+                      Home
+                    </Button>
+                  </Link>
+
+                  <Link to={`fav`}>
+                    <Button minW={"6.5rem"} colorScheme="purple">
+                      Favourites
+                    </Button>
+                  </Link>
+
+                  <Link to={`viewcart`}>
+                    <Button minW={"6.5rem"} colorScheme={"yellow"}>
+                      View Cart
+                    </Button>
+                  </Link>
+
+                  <Link to={`profile`}>
+                    <Button minW={"6.5rem"} colorScheme="blue">
+                      Profile
+                    </Button>
+                  </Link>
+
                   <Button
                     minW={"6.5rem"}
                     colorScheme="red"
