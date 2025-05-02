@@ -148,7 +148,10 @@ const SignUp = ({
               placeholder="Enter your email"
               value={SignUpData.email}
               onChange={(e) =>
-                setSignUpData({ ...SignUpData, email: e.target.value })
+                setSignUpData({
+                  ...SignUpData,
+                  email: e.target.value.toLowerCase(),
+                })
               }
             />
             <FormErrorMessage mb={-5}>
