@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  // origin: "http://localhost:5173",
+  // origin: "http://localhost:5174",
   // origin: "https://bp8ntrs2-5173.uks1.devtunnels.ms",
   origin: "https://my-product-store2.onrender.com",
   credentials: true,

@@ -32,7 +32,7 @@ const Homepage = () => {
   const [searchval, setSearchVal] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [rangeVal, setRangeVal] = useState([150, 10000000]);
+  const [rangeVal, setRangeVal] = useState([100, 100000]);
 
   const sortstatus = useRef("Newest");
 

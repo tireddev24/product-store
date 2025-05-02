@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuth } from "../auth/auth";
-import Cookies from "universal-cookie";
 
 const useLogin = () => {
   const { login, url } = useAuth();
@@ -25,11 +24,19 @@ const useLogin = () => {
       });
 
       if (!res) {
-        setError("Unable to communicate with erver");
-        return { success: false, message: "Unable to commnicate with server" };
+        setError("An unexpected error occured!");
+        return { success: false, message: "An unexpected error occured!" };
       }
 
       const data = await res.json();
+
+      if (res.status === 429) {
+        setError("Too Many Login Attempts");
+        return {
+          success: false,
+          message: "Too many login attempts. Please Try again later",
+        };
+      }
 
       if (res.status === 200) {
         login(data.user);
@@ -46,6 +53,7 @@ const useLogin = () => {
       }
     } catch (error) {
       setError(error.message);
+      console.log(error);
       return { success: false, message: "Unable to communicate with server" };
     } finally {
       setLoading(false);
