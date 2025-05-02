@@ -1,119 +1,145 @@
-import { useEffect, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/auth.jsx";
 import SignUp from "../components/signup.jsx";
 import { useToast } from "@chakra-ui/react";
 import useSignUp from "../hooks/useSignUp.jsx";
 
+const INITIAL_FORM_STATE = {
+  firstname: "",
+  lastname: "",
+  email: "",
+  username: "",
+  password: "",
+  confirmPassword: "",
+};
+
+const VALIDATION_RULES = {
+  username: (value) => value.length >= 8,
+  password: (value) => value.length >= 8,
+  email: (value) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(value);
+  },
+};
+
 const SignUpPage = () => {
   const navigate = useNavigate();
   const { url } = useAuth();
-  const { loading } = useSignUp();
+  const { loading, registerUser } = useSignUp();
 
   const toast = useToast();
   const [pass, showPass] = useState(false);
-  const [SignUpData, setSignUpData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [signUpData, setSignUpData] = useState(INITIAL_FORM_STATE);
 
   const [userName, setUserName] = useState({
-    success: false,
+    success: true,
     message: "Enter a username",
   });
+
   const [disabled, setDisabled] = useState(true);
   const [invalid, setInvalid] = useState({
     password: false,
     email: false,
   });
 
-  useEffect(() => {
-    if (
-      SignUpData.email &&
-      SignUpData.username.length >= 8 &&
-      SignUpData.password.length >= 8 &&
-      SignUpData.confirmPassword.length >= 8 &&
-      SignUpData.firstname &&
-      SignUpData.lastname &&
-      SignUpData.password === SignUpData.confirmPassword &&
-      userName.success
-    ) {
-      setDisabled(false);
-    } else {
-      setDisabled(true);
-    }
-  }, [SignUpData]);
+  const validateForm = useCallback(() => {
+    const isValid =
+      signUpData.email &&
+      VALIDATION_RULES.username(signUpData.username) &&
+      VALIDATION_RULES.password(signUpData.password) &&
+      signUpData.password === signUpData.confirmPassword &&
+      signUpData.firstname &&
+      signUpData.lastname &&
+      userName.success;
 
-  useEffect(() => {
-    if (SignUpData.password === SignUpData.confirmPassword) {
-      setInvalid({ ...invalid, password: false });
-    } else if (SignUpData === "") {
-      setInvalid({ ...invalid, password: false });
-    } else {
-      setInvalid({ ...invalid, password: true });
-    }
-  }, [SignUpData]);
+    setDisabled(!isValid);
+  }, [signUpData, userName.success]);
 
-  useEffect(() => {
-    const validateEmail = () => {
-      if (SignUpData.email.includes("@") && SignUpData.email.includes(".")) {
-        setInvalid({ ...invalid, email: false });
-      } else if (SignUpData.email === "") {
-        setInvalid({ ...invalid, email: false });
-      } else {
-        setInvalid({ ...invalid, email: true });
-      }
-    };
+  const validatePassword = useCallback(() => {
+    const isPasswordValid =
+      (signUpData.password !== "" || signUpData.confirmPassword !== "") &&
+      signUpData.password === signUpData.confirmPassword;
 
-    const checkUsername = async () => {
+    signUpData.password.length > 0 || signUpData.confirmPassword.length > 0
+      ? setInvalid((prev) => ({ ...prev, password: !isPasswordValid }))
+      : setInvalid((prev) => ({ ...prev, password: false }));
+  }, [signUpData.password, signUpData.confirmPassword]);
+
+  const validateEmail = useCallback(() => {
+    const isEmailValid =
+      signUpData.email === "" || VALIDATION_RULES.email(signUpData.email);
+
+    setInvalid((prev) => ({ ...prev, email: !isEmailValid }));
+  }, [signUpData.email]);
+
+  const checkUsername = useCallback(async () => {
+    try {
       const res = await fetch(`${url}/api/users/checkusername`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(SignUpData),
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signUpData),
       });
+
       const data = await res.json();
       setUserName(data);
-    };
+    } catch (error) {
+      console.error("Username check error:", error);
+      setUserName({
+        success: true,
+        message: "Error verifying username availability.",
+      });
+    }
+  }, [signUpData.username, url]);
 
+  useEffect(() => {
+    validateForm();
+  }, [validateForm]);
+
+  useEffect(() => {
+    validatePassword();
+  }, [validatePassword]);
+
+  useEffect(() => {
     validateEmail();
-    checkUsername();
-  }, [SignUpData]);
+    if (signUpData.username) {
+      checkUsername();
+    }
+  }, [validateEmail, checkUsername, signUpData.username]);
 
   const handleRegister = async () => {
-    const { success, message } = await registerUser(SignUpData);
+    try {
+      const { success, message } = await registerUser(signUpData);
 
-    toast({
-      position: "top",
-      status: success ? "success" : "error",
-      title: success ? "Account created" : "",
-      description: success ? "Welcome to product store" : message,
-      isClosable: false,
-      duration: 1500,
-    });
-
-    if (success === true) {
-      setSignUpData({
-        firstname: "",
-        lastname: "",
-        email: "",
-        username: "",
-        password: "",
-        confirmPassword: "",
+      toast({
+        position: "top",
+        status: success ? "success" : "error",
+        title: success ? "Account created" : "",
+        description: success ? "Welcome to product store" : message,
+        duration: 1500,
       });
-      navigate("/");
+      if (success) {
+        success && setSignUpData(INITIAL_FORM_STATE);
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast({
+        position: "top",
+        status: "error",
+        title: "Registration failed",
+        description: "An unexpected error occurred",
+        isClosable: true,
+        duration: 2000,
+      });
     }
   };
 
   return (
     <SignUp
       handleRegister={handleRegister}
-      SignUpData={SignUpData}
+      SignUpData={signUpData}
       setSignUpData={setSignUpData}
       disabled={disabled}
       invalid={invalid}
