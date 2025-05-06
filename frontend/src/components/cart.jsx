@@ -47,18 +47,19 @@ const Cart = ({}) => {
   }, []);
 
   const handleRemoveFromCart = async (pid) => {
-    let mes = "error";
     const remove = new Promise((resolve, reject) => {
       setTimeout(async () => {
-        const { success, message } = resolve(await removeFromCart(pid));
-        mes = message;
-        reject(!success);
-      }, 1500);
+        const { success, message } = await removeFromCart(pid);
+        success ? resolve() : reject();
+      }, 1000);
     });
 
     toast.promise(remove, {
-      success: { title: " Removed item from cart", description: "" },
-      error: { title: "Error", description: mes },
+      success: { title: "Removed From Cart", description: "" },
+      error: {
+        title: "An Unexpected Error Occurred",
+        description: "Please try again later",
+      },
       loading: { title: "Working", description: "Please wait" },
     });
   };

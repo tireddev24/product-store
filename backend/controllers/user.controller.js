@@ -5,12 +5,8 @@ import { connectDB } from "../config/db.js";
 export const createUser = async (req, res) => {
   const newUser = req.body;
   const user_name = newUser.email.slice(0, newUser.email.indexOf("@"));
-  console.log(user_name);
 
   const newUserData = new User({ ...newUser, username: user_name });
-
-  console.log(newUserData);
-
   // return
   try {
     await connectDB();
@@ -18,20 +14,20 @@ export const createUser = async (req, res) => {
     const data = await User.findOne({ email: newUserData.email });
     // console.log(data)
     if (data) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: "A user with this email already exists!",
       });
+      return;
     }
 
-    if (!data) {
-      await newUserData.save();
-      return res.status(200).json({
-        success: true,
-        data: newUserData,
-        message: "User created successfully!",
-      });
-    }
+    await newUserData.save();
+    res.status(200).json({
+      success: true,
+      data: newUserData,
+      message: "User created successfully!",
+    });
+    return;
   } catch (error) {
     console.log(error);
     return res

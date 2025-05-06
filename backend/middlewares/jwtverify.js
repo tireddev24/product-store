@@ -7,9 +7,10 @@ export const verifyJwt = (req, res, next) => {
   const access_token = req.cookies.authToken;
 
   if (!access_token) {
-    res
-      .status(400)
-      .json({ success: false, message: "No Authorization Token Provided" });
+    res.status(400).json({
+      success: false,
+      message: "No Authorization Token Provided. Please Login",
+    });
     return;
   }
 

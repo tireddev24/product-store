@@ -110,18 +110,31 @@ export const removeProduct = async (req, res) => {
   try {
     await connectDB();
 
-    const inCart = await Cart.findOne({ _id: id });
+    const inCart = await Cart.findOne({ _id: id }).populate({
+      path: "product",
+      select: "name",
+    });
 
     if (!inCart) {
-      res.status(404).json({ success: false, message: "Product not found" });
+      res
+        .status(404)
+        .json({ success: false, message: "Product not found in cart" });
       return;
     }
 
     const prod = await Cart.findByIdAndDelete({ _id: id });
 
-    res
-      .status(200)
-      .json({ success: true, data: prod, message: "Removed from cart" });
+    await User.findByIdAndUpdate(
+      inCart.cartowner,
+      { $pull: { cartedProducts: inCart._id } },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      data: prod,
+      message: `Removed ${inCart.product.name} from cart`,
+    });
     return;
   } catch (error) {
     console.log(error);

@@ -19,6 +19,7 @@ const corsOptions = {
 //MIDDLEWARES
 app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(morgan("dev"));
 
 //ROUTES
 app.use("/api", router);

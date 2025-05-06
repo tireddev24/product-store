@@ -65,15 +65,27 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
       return;
     }
 
-    const { success, message } = await addToCart(pid);
-    success && setInCart(true);
+    const addToCartPromise = new Promise(async (resolve, reject) => {
+      const { success, message } = await addToCart(pid);
+      success && setInCart(true);
+      success ? resolve() : reject();
+    });
 
-    toast({
-      status: success ? "success" : "error",
-      description: message,
-      duration: 1500,
-      variant: "left-accent",
-      position: "top",
+    toast.promise(addToCartPromise, {
+      success: {
+        title: "Added " + product.name + " to cart",
+        description: "",
+        colorScheme: "purple",
+        duration: 1500,
+      },
+      error: {
+        title: "An unexpected error occured",
+        description: "Please try again later",
+      },
+      loading: {
+        title: "Adding to " + product.name + "favourites",
+        description: "Please wait",
+      },
     });
   };
   useEffect(() => {
@@ -83,12 +95,12 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
       }
     };
     const updateTrigger = document.getElementById("update");
-    window.addEventListener("keydown", update);
+    isOpen && updateTrigger.addEventListener("keydown", update);
 
     return () => {
-      window.removeEventListener("keydown", update);
+      isOpen && updateTrigger.removeEventListener("keydown", update);
     };
-  });
+  }, []);
 
   const handleUpdateProduct = async (pid, updatedProduct) => {
     const { success, message } = await updateProduct(pid, updatedProduct);
@@ -123,26 +135,57 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
     }
 
     if (fav) {
-      const { success, message } = await removeFromFavorites(pid);
-      await getFavorites();
-      toast({
-        position: "top",
-        status: success ? "success" : "error",
-        description: message,
-        colorScheme: "blue",
+      // const { success, message } = await removeFromFavorites(pid);
+
+      const removeFromFavPromise = new Promise(async (resolve, reject) => {
+        const { success, message } = await removeFromFavorites(pid);
+        await getFavorites();
+        success ? resolve() : reject();
       });
+
+      toast.promise(removeFromFavPromise, {
+        success: {
+          title: "Removed " + product.name + " from favourites ",
+          description: "",
+          duration: 1500,
+        },
+        error: {
+          title: "An unexpected error occured",
+          description: "Please try again later",
+        },
+        loading: {
+          title: "Removing " + product.name + " from favourites",
+          description: "Please wait",
+        },
+      });
+
       return;
     }
 
-    const { success, message } = await addToFavorites(pid);
-    await getFavorites();
-
-    toast({
-      position: "top",
-      status: success ? "success" : "error",
-      description: message,
-      colorScheme: "blue",
+    const addToFavPromise = new Promise(async (resolve, reject) => {
+      const { success, message } = await addToFavorites(pid);
+      await getFavorites();
+      success ? resolve() : reject();
     });
+
+    let mes = toast.promise(addToFavPromise, {
+      success: {
+        title: "Added " + product.name + " to Favorites",
+        description: "",
+        colorScheme: "purple",
+        duration: 1500,
+      },
+      error: {
+        title: "An Unexpected Error Occurred",
+        description: "Please try again later",
+      },
+      loading: {
+        title: "Adding " + product.name + " to favorites",
+        description: "Please wait",
+      },
+    });
+
+    return;
   };
 
   const textColor = useColorModeValue("gray.600", "gray.200");

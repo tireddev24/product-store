@@ -343,7 +343,10 @@ export const useFavStore = create((set) => ({
       });
 
       if (!res) {
-        return { success: false, message: "Unable to Add to Favorites" };
+        return {
+          success: false,
+          message: "Unable to communicate with the server",
+        };
       }
 
       const data = await res.json();

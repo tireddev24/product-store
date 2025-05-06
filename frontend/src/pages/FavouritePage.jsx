@@ -36,8 +36,6 @@ function Favouritepage() {
     get();
   }, []);
 
-  console.log(favorites);
-
   const prods = products.filter((p) => p.fav === true);
 
   //loading

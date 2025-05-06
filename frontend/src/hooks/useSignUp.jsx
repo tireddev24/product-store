@@ -16,6 +16,7 @@ const useSignUp = () => {
       setLoading(true);
       const res = await fetch(`${url}/api/auth/signup`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -29,7 +30,7 @@ const useSignUp = () => {
       const data = await res.json();
 
       if (res.status === 201) {
-        login(data.user);
+        await login(data.user);
 
         return { success: data.success, message: data.message };
       } else if (res.status === 400) {
