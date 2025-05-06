@@ -68,7 +68,7 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
     const addToCartPromise = new Promise(async (resolve, reject) => {
       const { success, message } = await addToCart(pid);
       success && setInCart(true);
-      success ? resolve() : reject();
+      success? resolve() : reject();
     });
 
     toast.promise(addToCartPromise, {
@@ -79,11 +79,11 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
         duration: 1500,
       },
       error: {
-        title: "An unexpected error occured",
+        title: "An unexpected error occurred",
         description: "Please try again later",
       },
       loading: {
-        title: "Adding to " + product.name + "favourites",
+        title: "Adding " + product.name + "to cart",
         description: "Please wait",
       },
     });
@@ -140,7 +140,7 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
       const removeFromFavPromise = new Promise(async (resolve, reject) => {
         const { success, message } = await removeFromFavorites(pid);
         await getFavorites();
-        success ? resolve() : reject();
+        success? resolve() : reject();
       });
 
       toast.promise(removeFromFavPromise, {
@@ -150,7 +150,7 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
           duration: 1500,
         },
         error: {
-          title: "An unexpected error occured",
+          title: "An unexpected error occurred",
           description: "Please try again later",
         },
         loading: {
