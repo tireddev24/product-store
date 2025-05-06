@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     setTimeout(() => {
       window.location.replace("/");
-    }, 950);
+    }, 850);
   };
 
   return (

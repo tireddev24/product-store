@@ -23,9 +23,11 @@ import { useAuth } from "../auth/auth";
 import { FaShoppingCart } from "react-icons/fa";
 import { useCartStore } from "../store/product";
 import { FaUnlockAlt } from "react-icons/fa";
+import useLogout from "../hooks/useLogout";
 
 const Navbar = ({ show, setShow }) => {
-  const { isAuthenticated, userData, logout } = useAuth();
+  const { isAuthenticated, userData } = useAuth();
+  const { logoutUser } = useLogout();
   const { cart, fetchCart } = useCartStore();
   const [count, setCount] = useState(0);
   const navigate = useNavigate();
@@ -44,7 +46,7 @@ const Navbar = ({ show, setShow }) => {
             status: "error",
             description: message,
           });
-          await logout();
+          await logoutUser();
           navigate("/login");
         }
         cart && setCount(cart.length);
@@ -59,7 +61,7 @@ const Navbar = ({ show, setShow }) => {
   }, [location.pathname]);
 
   const handleLogOut = async () => {
-    await logout();
+    await logoutUser();
 
     toast({
       status: "info",
