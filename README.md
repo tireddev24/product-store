@@ -1,8 +1,8 @@
-## PRODUCT STORE
+## PRODUCT STORE 🏬
 
 A comprehensive MERN stack application that simulates features of a modern e-commerce website.
 
-## FEATURES
+## FEATURES 📲
 - Sign up / Login
 - Create Product
 - Edit Product Details
@@ -40,3 +40,7 @@ A comprehensive MERN stack application that simulates features of a modern e-com
 7. View the page in the browser with the link in the terminal. It should look like this:
    
    ![image](https://github.com/user-attachments/assets/f54b2509-dea1-4458-99a0-e79f01a9151d)
+
+### THINGS TO NOTE 📝
+- ```npm install``` installs the dependencies 
+- ```npm run dev``` starts the server 
