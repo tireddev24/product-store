@@ -12,7 +12,7 @@ A comprehensive MERN stack application that simulates features of a modern e-com
 
 ![Screenshot 2025-04-10 113652](https://github.com/user-attachments/assets/46b55e96-4fd1-4907-9c2c-1a801418ddaf)
 
-## HOW TO USE THIS PROJECT 🛠️
+## HOW TO USE THIS REPO 🛠️
 1. Clone the project. Open your terminal and use the following command:
      ```bash
       git clone https://github.com/tireddev24/product-store 
