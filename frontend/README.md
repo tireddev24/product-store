@@ -1,8 +1,37 @@
-# React + Vite
+## PRODUCT STORE 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive web application that aims to simulate the features of an e-commerce website. Built with **React** and best practices in mind.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📁 Project Structure
+
+src/
+- ├── auth/ # Authentication
+- ├── components/ # Reusable UI components
+- ├── functions/ # Reusable functions
+- ├── hooks/ # Custom React hooks
+- ├── pages/ # Application Pages
+- ├── store/ # API functions and storage
+- ├── utils/ # React Component Functions
+- ├── App.jsx # Root component
+- └── main.jsx # Application Entry point
+
+## 🛠️ Tech Stack
+
+- ⚛️ React 18
+- 🧠 TypeScript
+- 🧩 React Router
+- 🎨 Chakra UI
+- 💅 TailwindCSS
+- 📦 Vite
+
+## 🌐 Run Application
+  ```bash
+    npm install
+    npm run dev
+  ```
+
+## 👨‍💻 Author
+
+- Developed by [Michael Amao](https://github.com/tireddev24)
