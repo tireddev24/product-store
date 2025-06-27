@@ -1,14 +1,7 @@
-import { Router } from "express";
-import { verifyJwt } from "../middlewares/jwtverify.js";
+import {Router} from "express";
+import {verifyJwt} from "../middlewares/jwtverify.js";
 
-import {
-  createProduct,
-  getProducts,
-  updateProduct,
-  deleteProduct,
-  getSearchedProduct,
-  profileProducts,
-} from "../controllers/product.controller.js";
+import {createProduct, deleteProduct, getProducts, getSearchedProduct, profileProducts, updateProduct} from "../controllers/product.controller.js";
 
 const router = Router();
 
@@ -22,12 +15,8 @@ router.get("/profile", profileProducts);
 
 router.post("/create", createProduct);
 
-router.put("/:id", updateProduct);
-
 router.put("/profile/edit/:id", updateProduct);
 
 router.delete("/profile/delete/:id", deleteProduct);
-
-router.delete("/:id", deleteProduct);
 
 export default router;

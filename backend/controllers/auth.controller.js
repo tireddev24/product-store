@@ -1,125 +1,127 @@
-import User from "../models/user.model.js";
+import {compareSync, hashSync} from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { compareSync, hashSync } from "bcryptjs";
-import { connectDB } from "../config/db.js";
-import { JWT_SECRET } from "../secrets.js";
 import mongoose from "mongoose";
+import {connectDB} from "../config/db.js";
+import Login from "../models/login.model.js";
+import User from "../models/user.model.js";
+import {JWT_SECRET} from "../secrets.js";
 
 export const signup = async (req, res) => {
-  console.log(req.body);
+	console.log(req.body);
 
-  try {
-    await connectDB();
+	try {
+		await connectDB();
 
-    const userData = await User.findOne({ email: req.body.email });
+		const userData = await User.findOne({email: req.body.email});
 
-    if (userData) {
-      res.status(400).json({
-        success: false,
-        message: "A user with this email already exists",
-      });
-      return;
-    }
+		if (userData) {
+			res.status(400).json({
+				success: false,
+				message: "A user with this email already exists",
+			});
+			return;
+		}
 
-    const newUser = await User.create({
-      ...req.body,
-      password: hashSync(req.body.password, 10),
-    });
+		const newUser = await User.create({
+			...req.body,
+			password: hashSync(req.body.password, 10),
+		});
 
-    //JWT JSON web token
-    const token = jwt.sign(
-      { id: newUser._id, email: newUser.email },
-      JWT_SECRET,
-      { expiresIn: "2h" }
-    );
+		//JWT JSON web token
+		const token = jwt.sign({id: newUser._id, email: newUser.email}, JWT_SECRET, {expiresIn: "2h"});
 
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 60 * 60 * 2000, // 2 hours (in milliseconds)
-    });
+		res.cookie("authToken", token, {
+			httpOnly: true,
+			secure: true,
+			sameSite: "none",
+			maxAge: 60 * 60 * 2000, // 2 hours (in milliseconds)
+		});
 
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      user: newUser,
-    });
-    return;
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server Error" });
-    return;
-  }
+		res.status(201).json({
+			success: true,
+			message: "User registered successfully",
+			// user: newUser,
+		});
+		return;
+	} catch (error) {
+		res.status(500).json({success: false, message: "Server Error", error: error.message});
+		return;
+	}
 };
 
 export const login = async (req, res) => {
-  const { email, password: user_password } = req.body;
+	const {email, password: user_password} = req.body;
 
-  try {
-    await connectDB();
+	try {
+		await connectDB();
 
-    const user = await User.findOne({ email }).populate("favs");
+		const user = await User.findOne({email}).lean();
 
-    if (!user) {
-      res.status(404).json({ success: false, message: "Invalid Credentials" });
-      return;
-    }
+		// delete user.password;
 
-    if (!compareSync(user_password, user.password)) {
-      res.status(401).json({ success: false, message: "Invalid Credentials" });
-      return;
-    }
+		// .populate("favs");
 
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
-      expiresIn: "2h",
-    });
+		if (!user) {
+			res.status(404).json({success: false, message: "Invalid Credentials"});
+			return;
+		}
 
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 60 * 60 * 2000, // 2 hours (in milliseconds)
-    });
+		if (!compareSync(user_password, user.password)) {
+			res.status(401).json({success: false, message: "Invalid Credentials"});
+			return;
+		}
 
-    res.status(200).json({
-      success: true,
-      token,
-      message: "Logged in",
-      user,
-    });
+		await Login.create({user_id: user._id, username: user.username});
 
-    return;
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: "Server Error" });
-    return;
-  }
+		const {password, updatedAt, __v, ...data} = user;
+
+		console.log(user);
+		const token = jwt.sign({id: user._id, email: user.email}, JWT_SECRET, {
+			expiresIn: "2h",
+		});
+
+		res.cookie("authToken", token, {
+			httpOnly: true,
+			secure: true,
+			sameSite: "none",
+			maxAge: 60 * 60 * 2000, // 2 hours (in milliseconds)
+		});
+
+		res.status(200).json({
+			success: true,
+			message: "Logged in",
+			user: data,
+		});
+
+		return;
+	} catch (error) {
+		res.status(500).json({success: false, message: "Server Error", error: error.message});
+		return;
+	}
 };
 
 export const logout = async (req, res) => {
-  const userId = req.user.id;
+	const userId = req.user.id;
 
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    res.status(400).json({ success: false, message: "You are not logged in!" });
-    return;
-  }
+	if (!mongoose.Types.ObjectId.isValid(userId)) {
+		res.status(400).json({success: false, message: "You are not logged in!"});
+		return;
+	}
 
-  try {
-    await connectDB();
+	try {
+		await connectDB();
 
-    const user = await User.findOne({ _id: userId });
+		const user = await User.findOne({_id: userId});
 
-    if (!user) {
-      res.status(404).json({ success: false, message: "User not found" });
-      return;
-    }
-    res.clearCookie("authToken");
+		if (!user) {
+			res.status(404).json({success: false, message: "User not found"});
+			return;
+		}
+		res.clearCookie("authToken");
 
-    res.status(200).json({ success: true, message: "Log out successful" });
-    return;
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server Error" });
-  }
+		res.status(200).json({success: true, message: "Log out successful"});
+		return;
+	} catch (error) {
+		res.status(500).json({success: false, message: "Server Error", error: error.message});
+	}
 };

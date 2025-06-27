@@ -1,22 +1,22 @@
 import { Router } from "express";
-import { verifyJwt } from "../middlewares/jwtverify.js";
 import {
   AddCart,
+  allCartedProducts,
   getCart,
   removeProduct,
-  allCartedProducts,
 } from "../controllers/cart.controller.js";
+import { verifyJwt } from "../middlewares/jwtverify.js";
 
 const router = Router();
 
 router.use(verifyJwt);
 
-router.delete("/removefromcart/:id", removeProduct);
-
 router.get("/getcart", getCart);
+
+router.get("/allcart", allCartedProducts);
 
 router.post("/addtocart/:id", AddCart);
 
-router.get("/allcart", allCartedProducts);
+router.delete("/removefromcart/:id", removeProduct);
 
 export default router;
