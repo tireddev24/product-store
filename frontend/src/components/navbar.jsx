@@ -6,7 +6,6 @@ import {
   Container,
   Flex,
   HStack,
-  Icon,
   Text,
   useColorMode,
   useColorModeValue,
@@ -26,7 +25,7 @@ import { FaUnlockAlt } from "react-icons/fa";
 import useLogout from "../hooks/useLogout";
 
 const Navbar = ({ show, setShow }) => {
-  const { isAuthenticated, userData } = useAuth();
+  const { isAuthenticated, userData, logout } = useAuth();
   const { logoutUser } = useLogout();
   const { cart, fetchCart } = useCartStore();
   const [count, setCount] = useState(0);
@@ -41,12 +40,12 @@ const Navbar = ({ show, setShow }) => {
     if (isAuthenticated) {
       const getCart = async () => {
         const { success, message, res } = await fetchCart();
-        if (!success && res && res === 401) {
+        if (!success && res && (res === 401 || res === 400)) {
           toast({
             status: "error",
             description: message,
           });
-          await logoutUser();
+          await logout();
           navigate("/login");
         }
         cart && setCount(cart.length);

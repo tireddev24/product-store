@@ -3,15 +3,14 @@ import {
   Container,
   Heading,
   SimpleGrid,
-  Spinner,
   Text,
   useToast,
   VStack,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
-import { useCartStore, useFavStore, useProductStore } from "../store/product";
+import { useFavStore, useProductStore } from "../store/product";
 import ProductCard from "../components/ProductCard";
-import { Link, Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { params, priceRange } from "../store/sortparameters";
 import { getSortedProducts } from "../functions/handlers";
 import { useAuth } from "../auth/auth";
@@ -19,13 +18,11 @@ import SortMenu from "../components/sortmenu";
 import PriceRange from "../components/pricerange";
 import SearchBar from "../components/searchbar";
 import Spin from "../components/spinner";
-import Navbar from "../components/navbar";
 
 const Homepage = () => {
   const { fetchProducts, products } = useProductStore();
   const { favorites, getFavorites } = useFavStore();
-  const { cart } = useCartStore();
-  const { isAuthenticated, userData } = useAuth();
+  const { isAuthenticated } = useAuth();
   const toast = useToast();
   const [value, setValue] = useState("1");
   const [sortKey, setSortKey] = useState(params[0]);
@@ -59,9 +56,9 @@ const Homepage = () => {
         setIsLoading(false);
       }
     };
-    setTimeout(() => {
-      get();
-    }, 1500);
+    // setTimeout(() => {
+    get();
+    // }, 1500);
   }, []);
 
   function handleSliderChange(val) {

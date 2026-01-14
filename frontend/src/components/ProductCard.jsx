@@ -20,12 +20,10 @@ import {
   Alert,
   AlertIcon,
   Button,
-  Badge,
-  LightMode,
-  Tooltip,
 } from "@chakra-ui/react";
 import { FiEdit } from "react-icons/fi";
-import { FaPlus, FaTrash, FaMinus } from "react-icons/fa6";
+import { FaPlus, FaTrash } from "react-icons/fa6";
+import { HiShoppingBag as Shop } from "react-icons/hi";
 import { IoMdCheckmark } from "react-icons/io";
 import { useCartStore, useFavStore, useProfileStore } from "../store/product";
 import { useEffect, useState } from "react";
@@ -37,7 +35,7 @@ import { useAuth } from "../auth/auth";
 import Spin from "./spinner";
 
 const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
-  const { isAuthenticated, userData } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { updateProduct } = useProfileStore();
   const { addToFavorites, removeFromFavorites, getFavorites } = useFavStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -49,7 +47,7 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
     onClose: onDeleteClose,
   } = useDisclosure();
   const location = useLocation();
-  const { addToCart, cart } = useCartStore();
+  const { addToCart } = useCartStore();
   const [inCart, setInCart] = useState(false);
 
   const pathname = location.pathname;
@@ -65,10 +63,11 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
       return;
     }
 
-    const addToCartPromise = new Promise(async (resolve, reject) => {
-      const { success, message } = await addToCart(pid);
-      success && setInCart(true);
-      success? resolve() : reject();
+    const addToCartPromise = new Promise((resolve, reject) => {
+      addToCart(pid).then(({ success }) => {
+        success && setInCart(true);
+        success ? resolve() : reject();
+      });
     });
 
     toast.promise(addToCartPromise, {
@@ -137,10 +136,12 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
     if (fav) {
       // const { success, message } = await removeFromFavorites(pid);
 
-      const removeFromFavPromise = new Promise(async (resolve, reject) => {
-        const { success, message } = await removeFromFavorites(pid);
-        await getFavorites();
-        success? resolve() : reject();
+      const removeFromFavPromise = new Promise((resolve, reject) => {
+        removeFromFavorites(pid).then(({ success }) => {
+          getFavorites().then(() => {
+            success ? resolve() : reject();
+          });
+        });
       });
 
       toast.promise(removeFromFavPromise, {
@@ -162,13 +163,15 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
       return;
     }
 
-    const addToFavPromise = new Promise(async (resolve, reject) => {
-      const { success, message } = await addToFavorites(pid);
-      await getFavorites();
-      success ? resolve() : reject();
+    const addToFavPromise = new Promise((resolve, reject) => {
+      addToFavorites(pid).then(({ success }) => {
+        getFavorites().then(() => {
+          success ? resolve() : reject();
+        });
+      });
     });
 
-    let mes = toast.promise(addToFavPromise, {
+    toast.promise(addToFavPromise, {
       success: {
         title: "Added " + product.name + " to Favorites",
         description: "",
@@ -245,10 +248,15 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
 
         <HStack justify={"space-between"}>
           {product.owner.username && !pathname.includes("profile") && (
-            <Text fontWeight={"bold"}>
-              By: {product.owner.username.substr(0, 15)}
-              {product.owner.username.length > 15 && "..."}
-            </Text>
+            <HStack>
+              <Text color={"cyan.500"}>
+                <Shop fontSize={20} />
+              </Text>
+              <Text fontWeight={"bold"} ml={-1}>
+                {product.owner.username.substr(0, 12)}
+                {product.owner.username.length > 15 && "..."}
+              </Text>
+            </HStack>
           )}
           {!pathname.includes("profile") &&
             !pathname.includes("/viewcart") &&
