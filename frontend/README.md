@@ -1,4 +1,4 @@
-## PRODUCT STORE 
+## PRODUCT STORE
 
 A modern, responsive web application that aims to simulate the features of an e-commerce website. Built with **React** and best practices in mind.
 
@@ -7,6 +7,7 @@ A modern, responsive web application that aims to simulate the features of an e-
 ## 📁 Project Structure
 
 src/
+
 - ├── auth/ # Authentication
 - ├── components/ # Reusable UI components
 - ├── functions/ # Reusable functions
@@ -27,10 +28,11 @@ src/
 - 📦 Vite
 
 ## 🌐 Run Application
-  ```bash
-    npm install
-    npm run dev
-  ```
+
+```bash
+  npm install
+  npm run dev
+```
 
 ## 👨‍💻 Author
 

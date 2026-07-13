@@ -4,9 +4,10 @@
 	"description": "",
 	"main": "server.js",
 	"scripts": {
-		"dev": "dotenv -e .env.development -- nodemon server.js",
-		"build": "npm install && npm install --prefix frontend --production=false && npm run build --prefix frontend",
-		"start": "node server.js"
+		"dev": "dotenv -e .env.development -- nodemon --exec tsx server.ts",
+		"build:backend": "tsc",
+		"build": "npm install && npm run build:backend && npm install --prefix frontend --production=false && npm run build --prefix frontend",
+		"start": "node dist/server.js"
 	},
 	"type": "module",
 	"keywords": [
@@ -32,6 +33,15 @@
 		"morgan": "^1.10.0"
 	},
 	"devDependencies": {
-		"nodemon": "^3.1.9"
+		"@types/bcryptjs": "^2.4.6",
+		"@types/cookie-parser": "^1.4.8",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^4.17.21",
+		"@types/jsonwebtoken": "^9.0.8",
+		"@types/morgan": "^1.9.9",
+		"@types/node": "^20.11.24",
+		"nodemon": "^3.1.9",
+		"tsx": "^4.7.1",
+		"typescript": "^5.3.3"
 	}
 }
