@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/navbar";
 import Downtime from "../components/downtime/downtime";
+import { MAINTENANCE_MODE as MODE } from "../utils/secrets";
 
-const MAINTENANCE_MODE = false;
+const MAINTENANCE_MODE = MODE;
+console.log("MAINTENANCE_MODE", MAINTENANCE_MODE);
 
 const Landing = () => {
   const [show, setShow] = useState(false);
@@ -19,7 +21,7 @@ const Landing = () => {
     };
   }, []);
 
-  if (MAINTENANCE_MODE) return <Downtime />;
+  if (MAINTENANCE_MODE === "true") return <Downtime />;
 
   return (
     <div id="rest" className="min-h-screen relative flex flex-col text-ivory">

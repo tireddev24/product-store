@@ -44,9 +44,7 @@ const Login = ({
           <h1 className="display-serif text-2xl md:text-3xl">
             Welcome <span className="text-gold">back</span>.
           </h1>
-          <p className="text-xs uppercase tracking-widest text-mute">
-            Enter your credentials
-          </p>
+          <p className="text-xs uppercase tracking-widest text-mute">Enter your credentials</p>
         </div>
 
         <div className="flex flex-col gap-5">
@@ -64,9 +62,7 @@ const Login = ({
                 })
               }
             />
-            {invalid.email && (
-              <FormErrorMessage>Please enter a valid email</FormErrorMessage>
-            )}
+            {invalid.email && <FormErrorMessage>Please enter a valid email</FormErrorMessage>}
           </FormControl>
 
           <FormControl>
@@ -79,9 +75,7 @@ const Login = ({
                 placeholder="••••••••"
                 value={loginData.password}
                 className="pr-10"
-                onChange={(e) =>
-                  setLoginData({ ...loginData, password: e.target.value })
-                }
+                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
               />
               <button
                 type="button"
@@ -89,11 +83,7 @@ const Login = ({
                 className="absolute top-1/2 right-0 -translate-y-1/2 p-2 text-mute transition hover:text-gold"
                 aria-label={pass ? "Hide password" : "Show password"}
               >
-                {pass ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
+                {pass ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
           </FormControl>
@@ -113,9 +103,7 @@ const Login = ({
         </div>
 
         <div className="mt-8 border-t border-hairline pt-6 text-center">
-          <p className="text-[11px] uppercase tracking-widest text-mute">
-            New to Maison?
-          </p>
+          <p className="text-[11px] uppercase tracking-widest text-mute">New to Product Store?</p>
           <Link
             to="/signup"
             className="hover-underline mt-2 inline-block text-sm font-semibold text-gold"
