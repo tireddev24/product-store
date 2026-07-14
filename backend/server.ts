@@ -7,6 +7,7 @@ const app = createApp();
 // Connect to database once at startup
 connectDB();
 
+
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
 });

@@ -1,77 +1,82 @@
-import {
-  Button,
-  Container,
-  Heading,
-  SimpleGrid,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import ProductCard from "../components/ProductCard";
 import { Link, Outlet } from "react-router-dom";
+import ProductCard from "../components/ProductCard";
 import Spin from "./spinner";
+import { Button } from "./ui/Button";
+import { Kicker } from "./ui/Layout";
 
-const Profile = ({ profileProducts, userData, path, isLoading }) => {
+type ProfileProps = {
+  profileProducts: any[];
+  userData: any;
+  path: string;
+  isLoading: boolean;
+};
+
+const Profile = ({
+  profileProducts,
+  userData,
+  path,
+  isLoading,
+}: ProfileProps) => {
+  const inCreate = path.includes("create");
+
   return (
-    <Container maxW={"container.xl"} mt={{ base: "3rem", md: "5rem" }}>
-      {!path.includes("create") && (
-        <VStack spacing={10}>
-          <Heading
-            as={"h1"}
-            maxW={{ base: "3xl", lg: "full" }}
-            mt={"-1.5rem"}
-            h={"max-content"}
-            size={{ base: "lg", md: "xl" }}
-            bgGradient={"linear(to-tr, cyan.400, blue.500)"}
-            bgClip={"text"}
-            textAlign={"center"}
-          >
-            Welcome to your profile, {userData.username}!
-          </Heading>
-          <Link to={`create`}>
-            <Button colorScheme="blue" cursor={"pointer"}>
-              Create A New Product
-            </Button>
-          </Link>
+    <div className="mx-auto w-full max-w-7xl px-6 py-12 md:px-10">
+      {!inCreate && (
+        <>
+          <div className="mb-12 flex flex-col gap-6 border-b border-hairline pb-10 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-col gap-3">
+              <Kicker>Profile</Kicker>
+              <h1 className="display-serif text-3xl md:text-5xl">
+                Welcome back,{" "}
+                <span className="text-gold">{userData?.username}</span>.
+              </h1>
+              {profileProducts.length > 0 && (
+                <p className="text-xs uppercase tracking-[0.25em] text-mute">
+                  {profileProducts.length} product
+                  {profileProducts.length !== 1 && "s"} listed
+                </p>
+              )}
+            </div>
+            <div className="flex gap-3">
+              <Link to="settings">
+                <Button variant="default">Settings</Button>
+              </Link>
+              <Link to="create">
+                <Button variant="primary">Create new</Button>
+              </Link>
+            </div>
+          </div>
 
-          {profileProducts.length > 0 && (
-            <Text
-              float={"right"}
-              fontFamily={"monospace"}
-              fontSize={"1.2rem"}
-              fontWeight={"bold"}
-            >
-              You own {profileProducts.length} product(s).{" "}
-            </Text>
-          )}
           {isLoading && <Spin />}
+
           {profileProducts.length > 0 && !isLoading && (
-            <SimpleGrid
-              columns={{ base: 1, md: 2, lg: 3 }}
-              w={"full"}
-              spacing={10}
-              minChildWidth={"20rem"}
-              placeItems={{ base: "center", md: "left" }}
-            >
-              {profileProducts.map((product) => {
-                return <ProductCard key={product._id} product={product} />;
-              })}
-            </SimpleGrid>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {profileProducts.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
           )}
 
-          {profileProducts.length === 0 && (
-            <VStack mt={10} justify={"center"}>
-              <Text
-                fontSize={{ base: "1.2rem", md: "1.7rem" }}
-                fontWeight={"bold"}
+          {profileProducts.length === 0 && !isLoading && (
+            <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 border border-hairline px-6 py-16 text-center">
+              <p className="text-[10px] uppercase tracking-[0.35em] text-gold">
+                Empty catalogue
+              </p>
+              <p className="text-lg text-ivory">
+                You have not created any products yet.
+              </p>
+              <Link
+                to="create"
+                className="hover-underline mt-4 text-xs uppercase tracking-widest text-gold"
               >
-                You have not created any product(s).
-              </Text>
-            </VStack>
+                Create your first product
+              </Link>
+            </div>
           )}
-        </VStack>
+        </>
       )}
       <Outlet />
-    </Container>
+    </div>
   );
 };
 

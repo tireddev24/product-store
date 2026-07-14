@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react";
-import { X } from "lucide-react";
+import { X, AlertTriangle } from "lucide-react";
 import { cn } from "../../lib/cn";
 import { IconButton } from "./Button";
 
@@ -24,8 +24,8 @@ export function Modal({
 }: ModalProps) {
   useEffect(() => {
     if (!isOpen || !closeOnEsc) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -42,16 +42,18 @@ export function Modal({
     >
       <button
         type="button"
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-noir/85 backdrop-blur-sm"
         aria-label="Close modal overlay"
         onClick={closeOnOverlayClick ? onClose : undefined}
       />
       <div
         className={cn(
-          "relative z-10 w-full max-w-lg rounded-xl bg-white shadow-xl dark:bg-gray-800",
+          "relative z-10 w-full max-w-lg border border-hairline bg-surface shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]",
           className,
         )}
       >
+        {/* thin gold top hairline */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-gold to-transparent" />
         {children}
       </div>
     </div>
@@ -82,7 +84,7 @@ export function ModalHeader({
   return (
     <div
       className={cn(
-        "border-b border-gray-200 px-6 py-4 text-lg font-semibold dark:border-gray-700",
+        "border-b border-hairline px-6 py-5 text-sm font-semibold uppercase tracking-[0.18em] text-ivory",
         className,
       )}
     >
@@ -98,7 +100,11 @@ export function ModalBody({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={cn("px-6 py-4", className)}>{children}</div>;
+  return (
+    <div className={cn("px-6 py-5 text-sm text-ivory/90", className)}>
+      {children}
+    </div>
+  );
 }
 
 export function ModalFooter({
@@ -111,7 +117,7 @@ export function ModalFooter({
   return (
     <div
       className={cn(
-        "flex justify-end gap-2 border-t border-gray-200 px-6 py-4 dark:border-gray-700",
+        "flex justify-end gap-3 border-t border-hairline px-6 py-4",
         className,
       )}
     >
@@ -133,6 +139,8 @@ export function ModalCloseButton({ onClose }: { onClose: () => void }) {
   );
 }
 
+/* ------- AlertDialog aliases (backwards compat) ------- */
+
 export function AlertDialog({
   isOpen,
   onClose,
@@ -148,11 +156,9 @@ export function AlertDialog({
     </Modal>
   );
 }
-
 export function AlertDialogOverlay() {
   return null;
 }
-
 export function AlertDialogContent({
   children,
   className,
@@ -160,11 +166,8 @@ export function AlertDialogContent({
   children: ReactNode;
   className?: string;
 }) {
-  return (
-    <div className={cn("overflow-hidden rounded-xl", className)}>{children}</div>
-  );
+  return <div className={cn("overflow-hidden", className)}>{children}</div>;
 }
-
 export function AlertDialogHeader({
   children,
   className,
@@ -172,9 +175,8 @@ export function AlertDialogHeader({
   children: ReactNode;
   className?: string;
 }) {
-  return ModalHeader({ children, className });
+  return <ModalHeader className={className}>{children}</ModalHeader>;
 }
-
 export function AlertDialogBody({
   children,
   className,
@@ -182,9 +184,8 @@ export function AlertDialogBody({
   children: ReactNode;
   className?: string;
 }) {
-  return ModalBody({ children, className });
+  return <ModalBody className={className}>{children}</ModalBody>;
 }
-
 export function AlertDialogFooter({
   children,
   className,
@@ -192,8 +193,10 @@ export function AlertDialogFooter({
   children: ReactNode;
   className?: string;
 }) {
-  return ModalFooter({ children, className });
+  return <ModalFooter className={className}>{children}</ModalFooter>;
 }
+
+/* ------- Inline Alerts ------- */
 
 export function Alert({
   children,
@@ -205,19 +208,18 @@ export function Alert({
   className?: string;
 }) {
   const styles = {
-    info: "border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-100",
-    warning:
-      "border-yellow-200 bg-yellow-50 text-yellow-900 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-100",
+    info: "border-l-2 border-l-mute text-ivory/80",
+    warning: "border-l-2 border-l-gold text-gold",
     error:
-      "border-red-200 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-950 dark:text-red-100",
+      "border-l-2 border-l-[color:var(--color-danger)] text-[color:var(--color-danger)]",
     success:
-      "border-green-200 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-950 dark:text-green-100",
+      "border-l-2 border-l-[color:var(--color-success)] text-[color:var(--color-success)]",
   };
 
   return (
     <div
       className={cn(
-        "flex items-center gap-2 rounded-lg border px-4 py-3 text-sm",
+        "flex items-center gap-2 border border-hairline bg-noir-2 px-4 py-3 text-xs uppercase tracking-widest",
         styles[status],
         className,
       )}
@@ -228,38 +230,5 @@ export function Alert({
 }
 
 export function AlertIcon() {
-  return (
-    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-current/10">
-      !
-    </span>
-  );
-}
-
-export function Badge({
-  children,
-  className,
-  colorScheme = "green",
-}: {
-  children: ReactNode;
-  className?: string;
-  colorScheme?: "green" | "blue" | "red" | "yellow";
-}) {
-  const colors = {
-    green: "bg-green-500 text-white",
-    blue: "bg-blue-500 text-white",
-    red: "bg-red-500 text-white",
-    yellow: "bg-yellow-500 text-gray-900",
-  };
-
-  return (
-    <span
-      className={cn(
-        "inline-flex rounded-full px-2 py-0.5 text-xs font-semibold",
-        colors[colorScheme],
-        className,
-      )}
-    >
-      {children}
-    </span>
-  );
+  return <AlertTriangle className="size-4 shrink-0" />;
 }

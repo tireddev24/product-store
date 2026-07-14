@@ -1,5 +1,4 @@
 import { DollarSign } from "lucide-react";
-import { useColorModeValue } from "../context/ThemeContext";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 
@@ -16,22 +15,20 @@ const PriceRange = ({
   rangeVal,
   setRangeVal,
 }: PriceRangeProps) => {
-  const trackColor = useColorModeValue("#e5e7eb", "#374151");
   const min = 0;
   const max = 100000;
   const minPercent = ((rangeVal[0] - min) / (max - min)) * 100;
   const maxPercent = ((rangeVal[1] - min) / (max - min)) * 100;
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <p className="font-bold">Price Range</p>
-      <div className="relative h-2 w-64 sm:w-80 md:w-92">
+    <div className="flex w-full flex-col items-center gap-3">
+      <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-mute">
+        Price Range
+      </p>
+      <div className="relative h-2 w-64 sm:w-80 md:w-96">
+        <div className="absolute h-[2px] w-full translate-y-[3px] bg-hairline" />
         <div
-          className="absolute h-2 w-full rounded-full"
-          style={{ backgroundColor: trackColor }}
-        />
-        <div
-          className="absolute h-2 rounded-full bg-blue-500"
+          className="absolute h-[2px] translate-y-[3px] bg-gold"
           style={{
             left: `${minPercent}%`,
             width: `${maxPercent - minPercent}%`,
@@ -48,7 +45,7 @@ const PriceRange = ({
               rangeVal[1],
             ])
           }
-          className="pointer-events-none absolute h-2 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:size-6 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-500 [&::-webkit-slider-thumb]:bg-white"
+          className="pointer-events-none absolute h-2 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-none [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:bg-noir"
         />
         <input
           type="range"
@@ -61,15 +58,14 @@ const PriceRange = ({
               Math.max(Number(e.target.value), rangeVal[0] + 1),
             ])
           }
-          className="pointer-events-none absolute h-2 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:size-6 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-blue-500 [&::-webkit-slider-thumb]:bg-white"
+          className="pointer-events-none absolute h-2 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-none [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:bg-noir"
         />
       </div>
-      <div className="mt-2 flex max-w-88 flex-col gap-2 md:flex-row md:items-center">
-        <div className="flex gap-2">
-          <div className="relative">
-            <DollarSign className="absolute top-2.5 left-2 size-4 text-cyan-500" />
+      <div className="mt-3 flex w-full max-w-md flex-col gap-2 md:flex-row md:items-center">
+        <div className="flex flex-1 gap-2">
+          <div className="relative flex-1">
+            <DollarSign className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 text-gold" />
             <Input
-              variant="filled"
               value={rangeVal[0]}
               type="number"
               className="pl-8"
@@ -78,10 +74,9 @@ const PriceRange = ({
               }
             />
           </div>
-          <div className="relative">
-            <DollarSign className="absolute top-2.5 left-2 size-4 text-cyan-500" />
+          <div className="relative flex-1">
+            <DollarSign className="pointer-events-none absolute top-1/2 left-2 size-4 -translate-y-1/2 text-gold" />
             <Input
-              variant="filled"
               value={rangeVal[1]}
               type="number"
               className="pl-8"
@@ -91,7 +86,7 @@ const PriceRange = ({
             />
           </div>
         </div>
-        <Button variant="cyan" className="min-w-24" onClick={() => handleSlider()}>
+        <Button variant="primary" onClick={handleSlider}>
           Apply
         </Button>
       </div>

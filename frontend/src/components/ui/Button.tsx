@@ -3,9 +3,11 @@ import { cn } from "../../lib/cn";
 
 export type ButtonVariant =
   | "default"
+  | "primary"
   | "outline"
   | "ghost"
   | "unstyled"
+  | "danger"
   | "cyan"
   | "blue"
   | "red"
@@ -20,19 +22,25 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variantClasses: Record<ButtonVariant, string> = {
+  // The signature Noir & Gold surfaces
   default:
-    "bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600",
+    "border border-hairline bg-transparent text-ivory hover:border-gold hover:text-gold",
+  primary:
+    "bg-gold text-noir hover:bg-gold-hi border border-gold hover:border-gold-hi",
   outline:
-    "border border-blue-500 bg-transparent text-blue-600 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-blue-950",
-  ghost:
-    "bg-transparent text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800",
+    "border border-gold text-gold bg-transparent hover:bg-gold hover:text-noir",
+  ghost: "bg-transparent text-mute hover:text-gold",
   unstyled: "bg-transparent p-0 shadow-none hover:bg-transparent",
-  cyan: "bg-cyan-500 text-white hover:bg-cyan-600",
-  blue: "bg-blue-500 text-white hover:bg-blue-600",
-  red: "bg-red-500 text-white hover:bg-red-600",
-  purple: "bg-purple-500 text-white hover:bg-purple-600",
-  yellow: "bg-yellow-500 text-gray-900 hover:bg-yellow-600",
-  green: "bg-green-500 text-white hover:bg-green-600",
+  danger:
+    "border border-[color:var(--color-danger)]/40 text-[color:var(--color-danger)] hover:bg-[color:var(--color-danger)] hover:text-ivory",
+  // Legacy Chakra-style variant names, remapped to the Noir palette
+  cyan: "bg-gold text-noir hover:bg-gold-hi",
+  blue: "border border-gold text-gold hover:bg-gold hover:text-noir",
+  red: "border border-[color:var(--color-danger)]/50 text-[color:var(--color-danger)] hover:bg-[color:var(--color-danger)] hover:text-ivory",
+  purple: "border border-hairline text-ivory hover:border-gold hover:text-gold",
+  yellow: "bg-gold text-noir hover:bg-gold-hi",
+  green:
+    "border border-[color:var(--color-success)]/50 text-[color:var(--color-success)] hover:bg-[color:var(--color-success)] hover:text-noir",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -55,9 +63,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type={type}
         disabled={disabled}
         className={cn(
-          "inline-flex min-h-10 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
-          "disabled:cursor-not-allowed disabled:opacity-50",
+          "inline-flex min-h-10 items-center justify-center gap-2 rounded-none px-5 py-2 text-xs font-medium uppercase tracking-[0.14em] transition-all duration-200",
+          "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-noir",
+          "disabled:cursor-not-allowed disabled:opacity-40",
+          "cursor-pointer",
           variantClasses[variant],
           className,
         )}
@@ -70,7 +79,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
   },
 );
-
 Button.displayName = "Button";
 
 export const IconButton = forwardRef<
@@ -82,9 +90,9 @@ export const IconButton = forwardRef<
       ref={ref}
       type="button"
       className={cn(
-        "inline-flex size-10 items-center justify-center rounded-md transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex size-10 items-center justify-center rounded-none transition-colors duration-200 cursor-pointer",
+        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold",
+        "disabled:cursor-not-allowed disabled:opacity-40",
         variantClasses[variant],
         className,
       )}
@@ -94,13 +102,9 @@ export const IconButton = forwardRef<
     </button>
   );
 });
-
 IconButton.displayName = "IconButton";
 
-/** Maps legacy Chakra colorScheme prop to Button variant */
-export function colorSchemeToVariant(
-  colorScheme?: string,
-): ButtonVariant {
+export function colorSchemeToVariant(colorScheme?: string): ButtonVariant {
   switch (colorScheme) {
     case "cyan":
     case "blue":

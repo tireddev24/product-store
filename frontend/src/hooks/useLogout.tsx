@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useAuth } from "../auth/auth";
-import { FaBullseye } from "react-icons/fa";
-
 const useLogout = () => {
-  const { logout, url } = useAuth();
 
-  const [error, setError] = useState<null | string>(null);
+    const func = useAuth();
+  const url = func?.url;
+  const logout = func?.logout!;
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const logoutUser = async () => {

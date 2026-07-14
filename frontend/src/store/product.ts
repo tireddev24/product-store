@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { SERVER_URI as url } from "../utils/secrets";
 
-export const useProfileStore = create((set) => ({
+export const useProfileStore = create<any>((set) => ({
   profileProducts: [],
-  setProfileProducts: (profileProducts) => set({ profileProducts }),
+  setProfileProducts: (profileProducts: any) => set({ profileProducts }),
   fetchPersonalProfile: async () => {
     const res = await fetch(`${url}/api/products/profile`, {
       credentials: "include",
@@ -22,7 +22,7 @@ export const useProfileStore = create((set) => ({
     set({ profileProducts: data.product });
     return { success: data.success, message: data.message };
   },
-  createProduct: async (newProduct) => {
+  createProduct: async (newProduct: any) => {
     const res = await fetch(`${url}/api/products/create`, {
       method: "POST",
       credentials: "include",
@@ -49,13 +49,13 @@ export const useProfileStore = create((set) => ({
       return { success: false, message: data };
     }
 
-    set((state) => ({
+    set((state: any) => ({
       profileProducts: [...state.profileProducts, data.data],
     }));
 
     return { success: true, message: data.message };
   },
-  updateProduct: async (pid, updatedProduct) => {
+  updateProduct: async (pid: string, updatedProduct: any) => {
     const res = await fetch(`${url}/api/products/profile/edit/${pid}`, {
       method: "PUT",
       credentials: "include",
@@ -71,15 +71,15 @@ export const useProfileStore = create((set) => ({
     }
 
     //updates UI immediately without refresh
-    set((state) => ({
-      profileProducts: state.profileProducts.map((product) =>
+    set((state: any) => ({
+      profileProducts: state.profileProducts.map((product: any) =>
         product._id === pid ? data.data : product,
       ),
     }));
     // console.log(profileProducts)
     return { success: data.success, message: data.message };
   },
-  deleteProduct: async (pid) => {
+  deleteProduct: async (pid: string) => {
     const res = await fetch(`${url}/api/products/profile/delete/${pid}`, {
       method: "DELETE",
       credentials: "include",
@@ -88,18 +88,18 @@ export const useProfileStore = create((set) => ({
     if (!data.success) return { success: false, message: data.message };
 
     //updates UI immediately without refresh
-    set((state) => ({
+    set((state: any) => ({
       profileProducts: state.profileProducts.filter(
-        (product) => product._id !== pid,
+        (product: any) => product._id !== pid,
       ),
     }));
     return { success: true, message: data.message };
   },
 }));
 
-export const useCartStore = create((set) => ({
+export const useCartStore = create<any>((set) => ({
   cart: [],
-  setCart: (cart) => set({ cart }),
+  setCart: (cart: any) => set({ cart }),
   fetchCart: async () => {
     const res = await fetch(`${url}/api/cart/getcart`, {
       credentials: "include",
@@ -131,7 +131,7 @@ export const useCartStore = create((set) => ({
       cartLength: data.cartLength,
     };
   },
-  addToCart: async (pid) => {
+  addToCart: async (pid: string) => {
     try {
       const res = await fetch(`${url}/api/cart/addtocart/${pid}`, {
         method: "POST",
@@ -150,14 +150,14 @@ export const useCartStore = create((set) => ({
 
       const data = await res.json();
 
-      set((state) => ({ cart: [...state.cart, data.cart] }));
+      set((state: any) => ({ cart: [...state.cart, data.cart] }));
 
       return { success: data.success, message: data.message };
     } catch (error) {
       return { success: false, message: "Unable to communicate with server" };
     }
   },
-  removeFromCart: async (pid) => {
+  removeFromCart: async (pid: string) => {
     if (!pid) {
       return { success: false, message: "Invalid Product id" };
     }
@@ -174,8 +174,8 @@ export const useCartStore = create((set) => ({
 
       const data = await res.json();
 
-      set((state) => ({
-        cart: state.cart.filter((product) => product._id !== pid),
+      set((state: any) => ({
+        cart: state.cart.filter((product: any) => product._id !== pid),
       }));
       return { success: data.success, message: data.message };
     } catch (error) {
@@ -184,9 +184,9 @@ export const useCartStore = create((set) => ({
   },
 }));
 
-export const useProductStore = create((set) => ({
+export const useProductStore = create<any>((set) => ({
   products: [],
-  setProducts: (products) => set({ products }),
+  setProducts: (products: any) => set({ products }),
 
   fetchProducts: async () => {
     const res = await fetch(`${url}/api/products`);
@@ -194,13 +194,13 @@ export const useProductStore = create((set) => ({
     set({ products: data.data });
   },
 
-  fetchSearchedProduct: async (pid) => {
+  fetchSearchedProduct: async (pid: string) => {
     const res = await fetch(`${url}/api/products/search/${pid}`);
     const data = await res.json();
     set({ products: data.data });
   },
 
-  createProduct: async (newProduct) => {
+  createProduct: async (newProduct: any) => {
     if (!newProduct.name || !newProduct.price || !newProduct.image) {
       return { success: false, message: "Please fill in all fields" };
     }
@@ -223,7 +223,7 @@ export const useProductStore = create((set) => ({
     const data = await res.json();
 
     if (data.success) {
-      set((state) => ({ products: [...state.products, data.data] }));
+      set((state: any) => ({ products: [...state.products, data.data] }));
       return { success: true, message: data.message };
     } else {
       return { success: false, message: data.message };
@@ -231,9 +231,9 @@ export const useProductStore = create((set) => ({
   },
 }));
 
-export const useFavStore = create((set) => ({
+export const useFavStore = create<any>((set) => ({
   favorites: [],
-  setFavorites: (favorites) => set({ favorites }),
+  setFavorites: (favorites: any) => set({ favorites }),
 
   getFavorites: async () => {
     try {
@@ -261,7 +261,7 @@ export const useFavStore = create((set) => ({
     }
   },
 
-  addToFavorites: async (pid) => {
+  addToFavorites: async (pid: string) => {
     try {
       const res = await fetch(`${url}/api/fav/addtofav/${pid}`, {
         method: "POST",
@@ -284,7 +284,7 @@ export const useFavStore = create((set) => ({
         return { success: false, message: "An unexpected error occured" };
       }
 
-      set((state) => ({
+      set((state: any) => ({
         favorites: [...state.favorites, data.favs],
       }));
 
@@ -302,7 +302,7 @@ export const useFavStore = create((set) => ({
     }
   },
 
-  removeFromFavorites: async (pid) => {
+  removeFromFavorites: async (pid: string) => {
     const res = await fetch(`${url}/api/fav/removefromfav/${pid}`, {
       method: "DELETE",
       credentials: "include",
@@ -314,8 +314,8 @@ export const useFavStore = create((set) => ({
       return { success: false, message: "An unexpected error occured" };
     }
 
-    set((state) => ({
-      favorites: state.favorites.filter((fav) => fav._id !== pid),
+    set((state: any) => ({
+      favorites: state.favorites.filter((fav: any) => fav._id !== pid),
     }));
 
     return {

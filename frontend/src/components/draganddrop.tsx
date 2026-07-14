@@ -1,139 +1,117 @@
-import { useState, useCallback } from "react";
-import {
-  Box,
-  VStack,
-  Text,
-  Icon,
-  Input,
-  List,
-  ListItem,
-  ListIcon,
-  useColorModeValue,
-  Image,
-} from "@chakra-ui/react";
-import { LuCloudUpload as LuUploadCloud, LuFileCheck } from "react-icons/lu";
+import { useState, useCallback, type ChangeEvent, type DragEvent } from "react";
+import { CloudUpload, FileCheck2 } from "lucide-react";
 import Spin from "./spinner";
+import { cn } from "../lib/cn";
 
-const DragAndDropUpload = ({ handleFileUpload }) => {
+type Props = {
+  handleFileUpload: (
+    e: ChangeEvent<HTMLInputElement>,
+  ) => Promise<string | undefined>;
+};
+
+const DragAndDropUpload = ({ handleFileUpload }: Props) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [file, setFile] = useState(null);
-  const [image, setImage] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [image, setImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Styling variables based on Chakra's theme
-  const borderColor = useColorModeValue("gray.300", "gray.600");
-  const activeBorderColor = useColorModeValue("blue.500", "blue.300");
-  const bgColor = useColorModeValue("gray.50", "whiteAlpha.50");
-  const activeBgColor = useColorModeValue("blue.50", "whiteAlpha.200");
-
-  const onDragOver = (e) => {
+  const onDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  const onDragLeave = () => {
-    setIsDragging(false);
-  };
+  const onDragLeave = () => setIsDragging(false);
 
-  const onDrop = useCallback((e) => {
+  const onDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
     const droppedFiles = Array.from(e.dataTransfer.files);
-    if (droppedFiles.length > 0) {
-      setFile(droppedFiles[0]);
-    }
+    if (droppedFiles.length > 0) setFile(droppedFiles[0]);
   }, []);
 
-  const onFileInputChange = async (e) => {
+  const onFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setUploading(true);
     const selectedFiles = e.target.files;
     if (selectedFiles && selectedFiles.length > 0) {
-      const image = await handleFileUpload(e);
-      setImage(image);
+      const img = await handleFileUpload(e);
+      if (img) setImage(img);
       setFile(selectedFiles[0]);
-      setUploading(false);
     }
+    setUploading(false);
   };
 
   return (
-    <VStack spacing={4} w="full" mx="auto" p={4}>
-      <Box
+    <div className="mx-auto flex w-full flex-col items-center gap-4 py-2">
+      <div
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
-        position="relative"
-        w="full"
-        h="200px"
-        border="2px dashed"
-        borderColor={isDragging ? activeBorderColor : borderColor}
-        bg={isDragging ? activeBgColor : bgColor}
-        borderRadius="xl"
-        transition="all 0.2s"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        cursor="pointer"
         role="group"
+        className={cn(
+          "relative flex h-56 w-full cursor-pointer items-center justify-center border border-dashed transition-all",
+          isDragging
+            ? "border-gold bg-gold/5"
+            : "border-hairline bg-noir-2 hover:border-gold/60",
+        )}
       >
-        {/* Hidden Input Layered Over Box */}
-        <Input
+        <input
           type="file"
-          height="100%"
-          width="100%"
-          position="absolute"
-          top="0"
-          left="0"
-          opacity="0"
+          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
           aria-hidden="true"
-          accept="image/*" // Change as needed
+          accept="image/*"
           onChange={onFileInputChange}
         />
 
-        <VStack spacing={2} pointerEvents="none">
+        <div className="pointer-events-none flex flex-col items-center gap-2 text-center">
           {image ? (
-            <Image src={image} h={48} w={60} />
+            <img
+              src={image}
+              alt="uploaded preview"
+              className="max-h-44 w-auto border border-hairline object-contain"
+            />
+          ) : uploading ? (
+            <>
+              <Spin />
+              <p className="text-xs uppercase tracking-widest text-gold">
+                Uploading...
+              </p>
+            </>
           ) : (
             <>
-              {uploading ? (
-                <>
-                  <Spin />
-                  <Text fontSize="lg" color={activeBorderColor}>
-                    Uploading...
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Icon
-                    as={LuUploadCloud}
-                    boxSize={8}
-                    color={isDragging ? activeBorderColor : "gray.500"}
-                  />
-                  <Text
-                    fontWeight="medium"
-                    color={isDragging ? activeBorderColor : "gray.600"}
-                  >
-                    Drag & Drop to Upload
-                  </Text>
-                  <Text fontSize="sm" color="gray.400">
-                    or click to browse files
-                  </Text>
-                </>
-              )}
+              <CloudUpload
+                strokeWidth={1.2}
+                className={cn(
+                  "size-10 transition-colors",
+                  isDragging ? "text-gold" : "text-mute",
+                )}
+              />
+              <p
+                className={cn(
+                  "text-sm font-medium",
+                  isDragging ? "text-gold" : "text-ivory",
+                )}
+              >
+                Drag &amp; drop to upload
+              </p>
+              <p className="text-[11px] uppercase tracking-widest text-mute">
+                or click to browse files
+              </p>
             </>
           )}
-        </VStack>
-      </Box>
+        </div>
+      </div>
 
-      {/* Displaying Uploaded file */}
       {file && (
-        <List spacing={2} w="full">
-          <ListItem fontSize="sm" display="flex" alignItems="center">
-            <ListIcon as={LuFileCheck} color="green.500" />
-            {file.name} ({(file.size / 1024).toFixed(1)} KB)
-          </ListItem>
-        </List>
+        <ul className="w-full space-y-1 text-left">
+          <li className="flex items-center gap-2 text-xs text-mute">
+            <FileCheck2 className="size-4 text-[color:var(--color-success)]" />
+            <span className="truncate">
+              {file.name} ({(file.size / 1024).toFixed(1)} KB)
+            </span>
+          </li>
+        </ul>
       )}
-    </VStack>
+    </div>
   );
 };
 

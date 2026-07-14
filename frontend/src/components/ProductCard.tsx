@@ -1,16 +1,8 @@
-import {
-  Check,
-  Heart,
-  Pencil,
-  Plus,
-  ShoppingBag,
-  Trash2,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { Check, Heart, Pencil, Plus, Trash2, UserRound } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuth } from "../auth/auth";
 import { useCartStore, useFavStore, useProfileStore } from "../store/product";
-import { useColorModeValue } from "../context/ThemeContext";
 import { useToast } from "../context/ToastContext";
 import { useDisclosure } from "../hooks/useDisclosure";
 import Deletealert from "./deletealert";
@@ -29,8 +21,21 @@ import {
 } from "./ui/Modal";
 import { cn } from "../lib/cn";
 
-const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
-  const { isAuthenticated } = useAuth();
+type ProductCardProps = {
+  product: any;
+  fav?: boolean | string;
+  handleRemoveFromCart?: (pid: string) => void;
+  cartItemId?: string;
+};
+
+const ProductCard = ({
+  product,
+  fav,
+  handleRemoveFromCart,
+  cartItemId,
+}: ProductCardProps) => {
+  const func = useAuth();
+  const isAuthenticated = func?.isAuthenticated!;
   const { updateProduct } = useProfileStore();
   const { addToFavorites, removeFromFavorites, getFavorites } = useFavStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,30 +49,79 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
   const location = useLocation();
   const { addToCart } = useCartStore();
   const [inCart, setInCart] = useState(false);
-
   const pathname = location.pathname;
   const [updatedProduct, setUpdatedProduct] = useState(product);
 
-  const handleCart = async (pid) => {
+  const handleCart = async (pid: string) => {
     if (!isAuthenticated) {
-      toast({
-        status: "warning",
-        description: "Please Login First",
-      });
+      toast({ status: "warning", description: "Please login first" });
       return;
     }
-
     const addToCartPromise = new Promise((resolve, reject) => {
-      addToCart(pid).then(({ success }) => {
+      addToCart(pid).then(({ success }: { success: boolean }) => {
         success && setInCart(true);
         success ? resolve(undefined) : reject();
       });
     });
 
     toast.promise(addToCartPromise, {
+      success: { title: `Added ${product.name} to cart`, duration: 1500 },
+      error: {
+        title: "An unexpected error occurred",
+        description: "Please try again later",
+      },
+      loading: {
+        title: `Adding ${product.name} to cart`,
+        description: "Please wait",
+      },
+    });
+  };
+
+  useEffect(() => {
+    const update = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && isOpen) {
+        handleUpdateProduct(product._id, updatedProduct);
+      }
+    };
+    const updateTrigger = document.getElementById("update");
+    isOpen && updateTrigger?.addEventListener("keydown", update);
+    return () => {
+      isOpen && updateTrigger?.removeEventListener("keydown", update);
+    };
+  }, []);
+
+  const handleUpdateProduct = async (pid: string, updated: any) => {
+    const { success, message } = await updateProduct(pid, updated);
+    onClose();
+    toast({
+      title: success ? "Success" : "Error",
+      description: message,
+      status: success ? "success" : "error",
+      duration: 3000,
+    });
+    setIsLoading(false);
+  };
+
+  const toggleFav = async (pid: string) => {
+    if (!isAuthenticated) {
+      toast({ status: "warning", description: "Please login first" });
+      return;
+    }
+
+    const action = fav ? removeFromFavorites : addToFavorites;
+    const verb = fav ? "Removed" : "Added";
+    const verbing = fav ? "Removing" : "Adding";
+    const prep = fav ? "from" : "to";
+
+    const promise = new Promise((resolve, reject) => {
+      action(pid).then(({ success }: { success: boolean }) => {
+        getFavorites().then(() => (success ? resolve(undefined) : reject()));
+      });
+    });
+
+    toast.promise(promise, {
       success: {
-        title: "Added " + product.name + " to cart",
-        description: "",
+        title: `${verb} ${product.name} ${prep} favourites`,
         duration: 1500,
       },
       error: {
@@ -75,195 +129,110 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
         description: "Please try again later",
       },
       loading: {
-        title: "Adding " + product.name + "to cart",
+        title: `${verbing} ${product.name} ${prep} favourites`,
         description: "Please wait",
       },
     });
   };
-
-  useEffect(() => {
-    const update = (e) => {
-      if (e.key === "Enter" && isOpen) {
-        handleUpdateProduct(product._id, updatedProduct);
-      }
-    };
-    const updateTrigger = document.getElementById("update");
-    isOpen && updateTrigger?.addEventListener("keydown", update);
-
-    return () => {
-      isOpen && updateTrigger?.removeEventListener("keydown", update);
-    };
-  }, []);
-
-  const handleUpdateProduct = async (pid, updatedProduct) => {
-    const { success, message } = await updateProduct(pid, updatedProduct);
-
-    onClose();
-    if (!success) {
-      toast({
-        title: "Error",
-        description: message,
-        status: "error",
-        isClosable: false,
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: message,
-        status: "success",
-        isClosable: true,
-        duration: 3000,
-      });
-    }
-    setIsLoading(false);
-  };
-
-  const toggleFav = async (pid) => {
-    if (!isAuthenticated) {
-      toast({
-        status: "warning",
-        description: "Please Login First",
-      });
-      return;
-    }
-
-    if (fav) {
-      const removeFromFavPromise = new Promise((resolve, reject) => {
-        removeFromFavorites(pid).then(({ success }) => {
-          getFavorites().then(() => {
-            success ? resolve(undefined) : reject();
-          });
-        });
-      });
-
-      toast.promise(removeFromFavPromise, {
-        success: {
-          title: "Removed " + product.name + " from favourites ",
-          description: "",
-          duration: 1500,
-        },
-        error: {
-          title: "An unexpected error occurred",
-          description: "Please try again later",
-        },
-        loading: {
-          title: "Removing " + product.name + " from favourites",
-          description: "Please wait",
-        },
-      });
-
-      return;
-    }
-
-    const addToFavPromise = new Promise((resolve, reject) => {
-      addToFavorites(pid).then(({ success }) => {
-        getFavorites().then(() => {
-          success ? resolve(undefined) : reject();
-        });
-      });
-    });
-
-    toast.promise(addToFavPromise, {
-      success: {
-        title: "Added " + product.name + " to Favorites",
-        description: "",
-        duration: 1500,
-      },
-      error: {
-        title: "An Unexpected Error Occurred",
-        description: "Please try again later",
-      },
-      loading: {
-        title: "Adding " + product.name + " to favorites",
-        description: "Please wait",
-      },
-    });
-  };
-
-  const textColor = useColorModeValue("text-gray-600", "text-gray-200");
-  const bg = useColorModeValue("bg-white", "bg-gray-800");
-  const heartColor = useColorModeValue("#D69E2E", "#ECC94B");
 
   return (
-    <div
+    <article
+      className="group fade-up relative flex flex-col overflow-hidden border border-hairline bg-noir-2 transition-all duration-500 hover:border-gold/60"
       key={product._id}
-      className={cn(
-        "relative min-w-80 overflow-hidden rounded-lg shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
-        bg,
-      )}
     >
       <Newbadge dateCreated={product.createdAt} />
-      <img
-        src={product.image}
-        alt={product.name}
-        className="h-32 w-full object-cover lg:h-48"
-      />
 
-      {!pathname.includes("/profile") && (
-        <IconButton
-          className="absolute top-2 right-2 bg-transparent text-3xl shadow-none hover:bg-transparent"
-          onClick={() => toggleFav(product._id)}
-          aria-label="Toggle favourite"
-        >
-          {fav && isAuthenticated ? (
-            <Heart className="size-7" style={{ color: heartColor, fill: heartColor }} />
-          ) : (
-            <Heart className="size-7" />
-          )}
-        </IconButton>
-      )}
+      {/* Image */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-noir">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir via-noir/10 to-transparent opacity-70" />
 
-      <div className="p-4">
-        <h3 className="mb-2 text-lg font-semibold">{product.name}</h3>
-        <p className={cn("mb-8 text-base font-bold lg:text-xl", textColor)}>
-          ${product.price}
-        </p>
+        {!pathname.includes("/profile") && (
+          <IconButton
+            className="absolute top-3 left-3 size-9 border border-hairline bg-noir/60 backdrop-blur-sm hover:border-gold"
+            onClick={() => toggleFav(product._id)}
+            aria-label="Toggle favourite"
+          >
+            <Heart
+              className={cn(
+                "size-4 transition-colors",
+                fav && isAuthenticated
+                  ? "fill-gold text-gold"
+                  : "text-ivory group-hover:text-gold",
+              )}
+              strokeWidth={1.5}
+            />
+          </IconButton>
+        )}
+      </div>
 
-        <div className="flex items-center justify-between">
-          {product.owner.username && !pathname.includes("profile") && (
-            <div className="flex items-center gap-1">
-              <ShoppingBag className="size-5 text-cyan-500" />
-              <span className="font-bold">
-                {product.owner.username.substr(0, 12)}
-                {product.owner.username.length > 15 && "..."}
-              </span>
-            </div>
-          )}
+      {/* Body */}
+      <div className="flex flex-1 flex-col gap-4 border-t border-hairline p-5">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate text-sm font-semibold tracking-tight text-ivory">
+              {product.name}
+            </h3>
+            {product.owner?.username && !pathname.includes("profile") && (
+              <div className="mt-1 flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-mute">
+                <UserRound className="size-3 text-gold/70" />
+                {product.owner.username.substr(0, 15)}
+                {product.owner.username.length > 15 && "…"}
+              </div>
+            )}
+          </div>
+          <div className="text-right">
+            <p className="text-[9px] uppercase tracking-[0.25em] text-mute">
+              Price
+            </p>
+            <p className="text-base font-semibold tracking-tight text-gold">
+              ${product.price}
+            </p>
+          </div>
+        </div>
 
+        <div className="mt-auto pt-2">
           {!pathname.includes("profile") &&
             !pathname.includes("/viewcart") &&
-            !inCart && (
+            (inCart && isAuthenticated ? (
               <Button
+                disabled
+                leftIcon={<Check className="size-4" />}
+                className="w-full"
+              >
+                Added
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
                 leftIcon={<Plus className="size-4" />}
-                className="ml-auto"
+                className="w-full"
                 onClick={() => handleCart(product._id)}
               >
                 Add to cart
               </Button>
-            )}
-
-          {isAuthenticated &&
-            !pathname.includes("profile") &&
-            !pathname.includes("/viewcart") &&
-            inCart && (
-              <Button
-                disabled
-                leftIcon={<Check className="size-4" />}
-                className="ml-auto cursor-not-allowed"
-              >
-                Added to cart
-              </Button>
-            )}
+            ))}
 
           {isAuthenticated && pathname.includes("/profile") && (
-            <div className="ml-auto flex gap-2">
-              <IconButton variant="blue" onClick={onOpen} aria-label="Edit product">
+            <div className="flex gap-2">
+              <IconButton
+                variant="default"
+                onClick={onOpen}
+                aria-label="Edit product"
+                className="flex-1"
+              >
                 <Pencil className="size-4" />
               </IconButton>
               <IconButton
-                variant="red"
+                variant="danger"
                 onClick={onDeleteOpen}
                 aria-label="Delete product"
+                className="flex-1"
               >
                 <Trash2 className="size-4" />
               </IconButton>
@@ -277,15 +246,17 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
 
           {isAuthenticated && pathname.includes("viewcart") && (
             <Button
-              variant={loading ? "ghost" : "red"}
-              onClick={() => handleRemoveFromCart(cartItemId)}
+              variant="danger"
+              className="w-full"
+              onClick={() => handleRemoveFromCart?.(cartItemId!)}
             >
-              {loading ? <Spin /> : "Remove from cart"}
+              {loading ? <Spin className="h-4" /> : "Remove from cart"}
             </Button>
           )}
         </div>
       </div>
 
+      {/* Edit modal */}
       <Modal
         id="update"
         isOpen={isOpen}
@@ -293,67 +264,61 @@ const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }) => {
         closeOnOverlayClick={false}
         closeOnEsc={false}
       >
-        <ModalHeader>Update Product</ModalHeader>
+        <ModalHeader>Update product</ModalHeader>
         <ModalCloseButton onClose={onClose} />
         <ModalBody>
           <div className="flex flex-col gap-4">
-            <Alert status="warning" className="rounded-xl">
+            <Alert status="warning">
               <AlertIcon />
               Please fill in all fields
             </Alert>
             <Input
-              placeholder="Product Name"
+              placeholder="Product name"
               name="name"
               value={updatedProduct.name}
-              required
               onChange={(e) =>
                 setUpdatedProduct({ ...updatedProduct, name: e.target.value })
               }
+              required
             />
             <Input
-              placeholder="Price"
-              name="price in dollars ($)"
+              placeholder="Price ($)"
+              name="price"
               type="number"
               value={updatedProduct.price}
               onChange={(e) =>
-                setUpdatedProduct({
-                  ...updatedProduct,
-                  price: e.target.value,
-                })
+                setUpdatedProduct({ ...updatedProduct, price: e.target.value })
               }
               required
             />
             <Input
-              placeholder="Copy and paste image URL here!"
+              placeholder="Image URL"
               name="image"
               value={updatedProduct.image}
               onChange={(e) =>
-                setUpdatedProduct({
-                  ...updatedProduct,
-                  image: e.target.value,
-                })
+                setUpdatedProduct({ ...updatedProduct, image: e.target.value })
               }
               required
             />
           </div>
         </ModalBody>
         <ModalFooter>
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
           <Button
-            variant={loading ? "ghost" : "blue"}
-            className="mr-3"
+            variant="primary"
+            disabled={loading}
             onClick={() => {
               setIsLoading(true);
               handleUpdateProduct(product._id, updatedProduct);
             }}
           >
-            {loading ? <Spin /> : "Update"}
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Cancel
+            {loading ? <Spin className="h-4" /> : "Update"}
           </Button>
         </ModalFooter>
       </Modal>
-    </div>
+    </article>
   );
 };
 

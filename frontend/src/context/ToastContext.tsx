@@ -27,6 +27,9 @@ type ToastOptions = {
   duration?: number;
   icon?: ReactNode;
   isClosable?: boolean;
+  position?: string;
+  variant?: string;
+  colorScheme?: string;
 };
 
 type ToastContextValue = {
@@ -44,13 +47,19 @@ type ToastContextValue = {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 const statusStyles: Record<ToastStatus, string> = {
-  success: "border-green-500/40 bg-green-50 text-green-900 dark:bg-green-950 dark:text-green-100",
-  error: "border-red-500/40 bg-red-50 text-red-900 dark:bg-red-950 dark:text-red-100",
-  warning:
-    "border-yellow-500/40 bg-yellow-50 text-yellow-900 dark:bg-yellow-950 dark:text-yellow-100",
-  info: "border-blue-500/40 bg-blue-50 text-blue-900 dark:bg-blue-950 dark:text-blue-100",
-  loading:
-    "border-blue-500/40 bg-blue-50 text-blue-900 dark:bg-blue-950 dark:text-blue-100",
+  success: "border-l-2 border-l-[color:var(--color-success)]",
+  error: "border-l-2 border-l-[color:var(--color-danger)]",
+  warning: "border-l-2 border-l-[color:var(--color-gold)]",
+  info: "border-l-2 border-l-[color:var(--color-mute)]",
+  loading: "border-l-2 border-l-[color:var(--color-gold)]",
+};
+
+const iconColor: Record<ToastStatus, string> = {
+  success: "text-[color:var(--color-success)]",
+  error: "text-[color:var(--color-danger)]",
+  warning: "text-gold",
+  info: "text-mute",
+  loading: "text-gold",
 };
 
 const statusIcons: Record<ToastStatus, ReactNode> = {
@@ -65,9 +74,7 @@ function normalizeOptions(
   options: ToastOptions | string,
   status?: ToastStatus,
 ): ToastOptions {
-  if (typeof options === "string") {
-    return { title: options, status };
-  }
+  if (typeof options === "string") return { title: options, status };
   return { ...options, status: options.status ?? status };
 }
 
@@ -76,7 +83,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    setToasts((prev) => prev.filter((t) => t.id !== id));
     const timer = timers.current.get(id);
     if (timer) {
       clearTimeout(timer);
@@ -87,7 +94,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const toast = useCallback(
     (options: ToastOptions) => {
       const id = options.id ?? crypto.randomUUID();
-      const duration = options.duration ?? 1500;
+      const duration = options.duration ?? 1800;
       const nextToast = { ...options, id, status: options.status ?? "info" };
 
       setToasts((prev) => [...prev.slice(-4), nextToast]);
@@ -136,30 +143,34 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="pointer-events-none fixed top-4 right-4 z-[100] flex w-full max-w-sm flex-col gap-2">
+      <div className="pointer-events-none fixed top-6 right-6 z-[100] flex w-full max-w-sm flex-col gap-2">
         {toasts.map((item) => {
           const status = item.status ?? "info";
           return (
             <div
               key={item.id}
               className={cn(
-                "pointer-events-auto flex items-start gap-3 rounded-lg border px-4 py-3 shadow-lg",
+                "pointer-events-auto flex items-start gap-3 rounded-none border border-hairline bg-surface-2 px-4 py-3 text-ivory shadow-[0_10px_30px_-15px_rgba(0,0,0,0.9)] backdrop-blur-sm",
                 statusStyles[status],
               )}
             >
-              {item.icon ?? statusIcons[status]}
+              <span className={iconColor[status]}>
+                {item.icon ?? statusIcons[status]}
+              </span>
               <div className="min-w-0 flex-1 text-left">
                 {item.title && (
-                  <p className="text-sm font-semibold">{item.title}</p>
+                  <p className="text-sm font-semibold tracking-tight text-ivory">
+                    {item.title}
+                  </p>
                 )}
                 {item.description && (
-                  <p className="text-sm opacity-90">{item.description}</p>
+                  <p className="text-xs text-mute">{item.description}</p>
                 )}
               </div>
               {item.isClosable !== false && (
                 <button
                   type="button"
-                  className="rounded p-0.5 opacity-70 hover:opacity-100"
+                  className="rounded p-0.5 text-mute transition hover:text-gold"
                   onClick={() => removeToast(item.id!)}
                   aria-label="Close toast"
                 >
@@ -180,11 +191,10 @@ type ToastFn = ToastContextValue["toast"] & {
 
 export function useToast(): ToastFn {
   const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error("useToast must be used within ToastProvider");
-  }
+  if (!context) throw new Error("useToast must be used within ToastProvider");
 
-  const toastFn = ((options: ToastOptions) => context.toast(options)) as ToastFn;
+  const toastFn = ((options: ToastOptions) =>
+    context.toast(options)) as ToastFn;
   toastFn.promise = context.promise;
   return toastFn;
 }

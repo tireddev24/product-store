@@ -1,7 +1,6 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useColorModeValue } from "../context/ThemeContext";
 import Spin from "../components/spinner";
 import { Button } from "./ui/Button";
 import {
@@ -11,7 +10,20 @@ import {
   FormLabel,
 } from "./ui/Form";
 import { Input } from "./ui/Input";
+import { Kicker } from "./ui/Layout";
 import { cn } from "../lib/cn";
+
+type SignUpProps = {
+  SignUpData: any;
+  disabled: boolean;
+  invalid: { email: boolean; password: boolean };
+  handleRegister: () => void;
+  loading: boolean;
+  pass: boolean;
+  showPass: React.Dispatch<React.SetStateAction<boolean>>;
+  setSignUpData: (d: any) => void;
+  userName: { success: boolean; message: string };
+};
 
 const SignUp = ({
   SignUpData,
@@ -23,35 +35,31 @@ const SignUp = ({
   showPass,
   setSignUpData,
   userName,
-}) => {
+}: SignUpProps) => {
   useEffect(() => {
-    const signUp = (e) => {
-      if (e.key === "Enter" && !disabled) {
-        handleRegister();
-      }
+    const signUp = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !disabled) handleRegister();
     };
     window.addEventListener("keydown", signUp);
-
-    return () => {
-      window.removeEventListener("keydown", signUp);
-    };
+    return () => window.removeEventListener("keydown", signUp);
   });
 
-  const cardBg = useColorModeValue("bg-white", "bg-gray-800");
-
   return (
-    <div className="mx-auto mt-8 max-w-2xl md:mt-[15vh]">
-      <div className={cn("flex flex-col gap-4 rounded-2xl p-4", cardBg)}>
-        <h2 className="gradient-text my-1 text-lg font-bold md:text-xl">
-          Sign up to Product Store
-        </h2>
+    <div className="mx-auto flex min-h-[80vh] w-full max-w-2xl items-center px-6 py-12">
+      <div className="w-full border border-hairline bg-noir-2 p-8 md:p-10">
+        <div className="mb-8 flex flex-col gap-3 border-b border-hairline pb-6">
+          <Kicker>Create account</Kicker>
+          <h1 className="display-serif text-2xl md:text-3xl">
+            Join <span className="text-gold">Maison</span>.
+          </h1>
+        </div>
 
-        <div className="mt-2 grid min-w-68 grid-cols-1 gap-8 md:grid-cols-2 md:gap-x-10">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <FormControl>
-            <FormLabel>First Name</FormLabel>
+            <FormLabel>First name</FormLabel>
             <Input
               variant="flushed"
-              placeholder="Enter your first name"
+              placeholder="First name"
               required
               value={SignUpData.firstname}
               onChange={(e) =>
@@ -61,10 +69,10 @@ const SignUp = ({
           </FormControl>
 
           <FormControl>
-            <FormLabel>Last Name</FormLabel>
+            <FormLabel>Last name</FormLabel>
             <Input
               variant="flushed"
-              placeholder="Enter your last name"
+              placeholder="Last name"
               type="text"
               required
               value={SignUpData.lastname}
@@ -78,18 +86,19 @@ const SignUp = ({
             <FormLabel>Username</FormLabel>
             <Input
               variant="flushed"
-              placeholder="Enter your user name"
+              placeholder="Username"
               type="text"
               value={SignUpData.username}
-              onChange={(e) => {
-                setSignUpData({ ...SignUpData, username: e.target.value });
-              }}
+              onChange={(e) =>
+                setSignUpData({ ...SignUpData, username: e.target.value })
+              }
             />
             {SignUpData.username && (
               <FormHelperText
                 className={cn(
-                  "ml-1 font-mono font-bold break-keep",
-                  userName.success ? "text-green-600" : "text-red-500",
+                  userName.success
+                    ? "text-[color:var(--color-success)]"
+                    : "text-[color:var(--color-danger)]",
                 )}
               >
                 {userName.message}
@@ -102,7 +111,7 @@ const SignUp = ({
             <Input
               variant="flushed"
               type="email"
-              placeholder="Enter your email"
+              placeholder="you@studio.com"
               value={SignUpData.email}
               onChange={(e) =>
                 setSignUpData({
@@ -111,9 +120,9 @@ const SignUp = ({
                 })
               }
             />
-            <FormErrorMessage className="-mb-5">
-              Please enter a valid email!
-            </FormErrorMessage>
+            {invalid.email && (
+              <FormErrorMessage>Please enter a valid email</FormErrorMessage>
+            )}
           </FormControl>
 
           <FormControl isInvalid={invalid.password}>
@@ -121,41 +130,45 @@ const SignUp = ({
             <div className="relative w-full">
               <Input
                 variant="flushed"
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 type={pass ? "text" : "password"}
                 value={SignUpData.password}
                 minLength={8}
                 maxLength={16}
                 required
+                className="pr-10"
                 onChange={(e) =>
                   setSignUpData({ ...SignUpData, password: e.target.value })
                 }
               />
-              <Button
-                variant="unstyled"
-                className="absolute top-0 right-0 z-2"
-                onClick={() => showPass((prevPass) => !prevPass)}
+              <button
+                type="button"
+                onClick={() => showPass((prev) => !prev)}
+                className="absolute top-1/2 right-0 -translate-y-1/2 p-2 text-mute transition hover:text-gold"
                 aria-label={pass ? "Hide password" : "Show password"}
               >
-                {pass ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
-              </Button>
+                {pass ? (
+                  <EyeOff className="size-4" />
+                ) : (
+                  <Eye className="size-4" />
+                )}
+              </button>
             </div>
-            <FormHelperText className="float-left ml-1">
-              Password must be up to 8 characters
-            </FormHelperText>
+            <FormHelperText>Minimum 8 characters</FormHelperText>
           </FormControl>
 
           <FormControl isInvalid={invalid.password}>
-            <FormLabel>Confirm Password</FormLabel>
+            <FormLabel>Confirm password</FormLabel>
             <div className="relative w-full">
               <Input
                 variant="flushed"
-                placeholder="Confirm your password"
+                placeholder="••••••••"
                 type={pass ? "text" : "password"}
                 value={SignUpData.confirmPassword}
                 minLength={8}
                 maxLength={16}
                 required
+                className="pr-10"
                 onChange={(e) =>
                   setSignUpData({
                     ...SignUpData,
@@ -163,40 +176,49 @@ const SignUp = ({
                   })
                 }
               />
-              <Button
-                variant="unstyled"
-                className="absolute top-0 right-0 z-2"
-                onClick={() => showPass((prevPass) => !prevPass)}
+              <button
+                type="button"
+                onClick={() => showPass((prev) => !prev)}
+                className="absolute top-1/2 right-0 -translate-y-1/2 p-2 text-mute transition hover:text-gold"
                 aria-label={pass ? "Hide password" : "Show password"}
               >
-                {pass ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
-              </Button>
+                {pass ? (
+                  <EyeOff className="size-4" />
+                ) : (
+                  <Eye className="size-4" />
+                )}
+              </button>
             </div>
-            <FormErrorMessage className="ml-1">
-              Passwords do not match!
-            </FormErrorMessage>
+            {invalid.password && (
+              <FormErrorMessage>Passwords do not match</FormErrorMessage>
+            )}
           </FormControl>
         </div>
 
         {loading ? (
-          <Spin />
+          <div className="mt-8">
+            <Spin />
+          </div>
         ) : (
           <Button
             disabled={disabled}
-            variant="outline"
-            className="mt-5"
+            variant="primary"
+            className="mt-8 w-full"
             onClick={handleRegister}
           >
-            Sign up
+            Create account
           </Button>
         )}
 
-        <div className="my-5 flex flex-col gap-1">
-          <p>Already have an account?</p>
-          <Link to="/login">
-            <span className="gradient-text cursor-pointer text-lg font-bold underline">
-              Login Here
-            </span>
+        <div className="mt-8 border-t border-hairline pt-6 text-center">
+          <p className="text-[11px] uppercase tracking-widest text-mute">
+            Already have an account?
+          </p>
+          <Link
+            to="/login"
+            className="hover-underline mt-2 inline-block text-sm font-semibold text-gold"
+          >
+            Login here
           </Link>
         </div>
       </div>

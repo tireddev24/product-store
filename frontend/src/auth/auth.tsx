@@ -13,14 +13,13 @@ export interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-// const url = "https://product-store-back.onrender.com";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userData, setUserData] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState<null | boolean>(null);
   const storedData = (() => {
     try {
-      return JSON.parse(sessionStorage.getItem("user_data")!) || null;
+      return JSON.parse(sessionStorage.getItem("user_data") || "") || null;
     } catch (error) {
       console.error("Error parsing user data from sessionStorage:", error);
       return null;

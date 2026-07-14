@@ -1,10 +1,9 @@
-
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SignUp from "../components/signup.jsx";
-import useSignUp from "../hooks/useSignUp.jsx";
-import { SERVER_URI as url } from "../utils/secrets.js";
-import { useToast } from "../context/ToastContext.js";
+import SignUp from "../components/signup";
+import useSignUp from "../hooks/useSignUp";
+import { SERVER_URI as url } from "../utils/secrets";
+import { useToast } from "../context/ToastContext";
 
 const INITIAL_FORM_STATE = {
   firstname: "",
@@ -16,18 +15,14 @@ const INITIAL_FORM_STATE = {
 };
 
 const VALIDATION_RULES = {
-  username: (value) => value.length >= 8,
-  password: (value) => value.length >= 8,
-  email: (value) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value);
-  },
+  username: (value: string) => value.length >= 8,
+  password: (value: string) => value.length >= 8,
+  email: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
 };
 
 const SignUpPage = () => {
   const navigate = useNavigate();
   const { loading, registerUser } = useSignUp();
-
   const toast = useToast();
   const [pass, showPass] = useState(false);
   const [signUpData, setSignUpData] = useState(INITIAL_FORM_STATE);
@@ -36,57 +31,40 @@ const SignUpPage = () => {
     success: true,
     message: "Enter a username",
   });
-
-  const [userNames, setUserNames] = useState([]);
+  const [userNames, setUserNames] = useState<string[]>([]);
 
   useEffect(() => {
     const getUsernames = async () => {
-      const res = await fetch(`${url}/api/users/checkusername`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await res.json();
-      setUserNames(data.usernames);
+      try {
+        const res = await fetch(`${url}/api/users/checkusername`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+        setUserNames(data.usernames ?? []);
+      } catch (e) {
+        console.error(e);
+      }
     };
-
     getUsernames();
   }, []);
 
-  const checkUsername = () => {
+  useEffect(() => {
     const exists = userNames.includes(signUpData.username);
     if (signUpData.username.length === 0) {
-      setUserName({
-        success: false,
-        message: "Username is required",
-      });
+      setUserName({ success: false, message: "Username is required" });
     } else if (signUpData.username.length < 8) {
-      setUserName({
-        success: false,
-        message: "Username must be at least 8 characters",
-      });
+      setUserName({ success: false, message: "Minimum 8 characters" });
     } else if (exists) {
-      setUserName({
-        success: false,
-        message: "Username already taken",
-      });
+      setUserName({ success: false, message: "Username already taken" });
     } else {
-      setUserName({
-        success: true,
-        message: "Username is available",
-      });
+      setUserName({ success: true, message: "Username is available" });
     }
-  };
-
-  useEffect(() => {
-    checkUsername();
-  }, [signUpData.username]);
+  }, [signUpData.username, userNames]);
 
   const [disabled, setDisabled] = useState(true);
-  const [invalid, setInvalid] = useState({
-    password: false,
-    email: false,
-  });
+  const [invalid, setInvalid] = useState({ password: false, email: false });
 
   const validateForm = useCallback(() => {
     const isValid =
@@ -97,7 +75,6 @@ const SignUpPage = () => {
       signUpData.firstname &&
       signUpData.lastname &&
       userName.success;
-
     setDisabled(!isValid);
   }, [signUpData, userName.success]);
 
@@ -105,7 +82,6 @@ const SignUpPage = () => {
     const isPasswordValid =
       (signUpData.password !== "" || signUpData.confirmPassword !== "") &&
       signUpData.password === signUpData.confirmPassword;
-
     signUpData.password.length > 0 || signUpData.confirmPassword.length > 0
       ? setInvalid((prev) => ({ ...prev, password: !isPasswordValid }))
       : setInvalid((prev) => ({ ...prev, password: false }));
@@ -114,35 +90,24 @@ const SignUpPage = () => {
   const validateEmail = useCallback(() => {
     const isEmailValid =
       signUpData.email === "" || VALIDATION_RULES.email(signUpData.email);
-
     setInvalid((prev) => ({ ...prev, email: !isEmailValid }));
   }, [signUpData.email]);
 
-  useEffect(() => {
-    validateForm();
-  }, [validateForm]);
-
-  useEffect(() => {
-    validatePassword();
-  }, [validatePassword]);
-
-  useEffect(() => {
-    validateEmail();
-  }, [validateEmail]);
+  useEffect(validateForm, [validateForm]);
+  useEffect(validatePassword, [validatePassword]);
+  useEffect(validateEmail, [validateEmail]);
 
   const handleRegister = async () => {
     try {
       const { success, message } = await registerUser(signUpData);
-
       toast({
-        position: "top",
         status: success ? "success" : "error",
         title: success ? "Account created" : "",
-        description: success ? "Welcome to product store" : message,
+        description: success ? "Welcome to Maison" : message,
         duration: 1500,
       });
       if (success) {
-        success && setSignUpData(INITIAL_FORM_STATE);
+        setSignUpData(INITIAL_FORM_STATE);
         navigate("/");
       }
     } catch (error) {
@@ -150,7 +115,6 @@ const SignUpPage = () => {
         status: "error",
         title: "Registration failed",
         description: "An unexpected error occurred",
-        isClosable: true,
         duration: 2000,
       });
     }

@@ -1,8 +1,9 @@
+import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 
-const Protected = ({ children }) => {
+const Protected = ({ children }: { children: ReactNode }) => {
   // const { isAuthenticated } = useAuth();
-  const storedData = JSON.parse(sessionStorage.getItem("user_data"));
+  const storedData = JSON.parse(sessionStorage.getItem("user_data") || "");
 
   const token = storedData && storedData.user.username;
 

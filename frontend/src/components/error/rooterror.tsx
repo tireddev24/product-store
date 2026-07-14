@@ -1,25 +1,25 @@
-import { Button, Heading, Icon, Text, VStack } from "@chakra-ui/react";
-import { MdError } from "react-icons/md";
+import { AlertOctagon } from "lucide-react";
+import { Button } from "../ui/Button";
 
-const Rooterror = ({}) => {
+const Rooterror = () => {
   return (
-    <VStack minH={"90vh"} spacing={10} justifyContent={"center"}>
-      <Icon boxSize={"150px"} color={"red"} fontSize={"2xl"}>
-        <MdError />
-      </Icon>
-      <VStack spacing={8}>
-        <Heading as={"h2"} size={{ base: "lg", md: "2xl" }}>
-          <Text>An unexpected error occured.</Text>
-        </Heading>
-        <Button
-          size={"lg"}
-          colorScheme="red"
-          onClick={() => window.location.reload()}
-        >
-          Try Again?
-        </Button>
-      </VStack>
-    </VStack>
+    <div className="flex min-h-[90vh] flex-col items-center justify-center gap-10 px-6 text-center">
+      <AlertOctagon
+        className="size-24 text-[color:var(--color-danger)]"
+        strokeWidth={1.2}
+      />
+      <div className="flex flex-col gap-4">
+        <p className="text-[10px] font-medium uppercase tracking-[0.35em] text-gold">
+          Something broke
+        </p>
+        <h2 className="display-serif text-2xl md:text-4xl">
+          An unexpected error occurred.
+        </h2>
+      </div>
+      <Button variant="outline" onClick={() => window.location.reload()}>
+        Try again
+      </Button>
+    </div>
   );
 };
 

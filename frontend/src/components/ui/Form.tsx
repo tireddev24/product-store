@@ -11,7 +11,10 @@ export function FormControl({
   isInvalid?: boolean;
 }) {
   return (
-    <div className={cn("w-full text-left", isInvalid && "text-red-500", className)}>
+    <div
+      data-invalid={isInvalid || undefined}
+      className={cn("w-full text-left", className)}
+    >
       {children}
     </div>
   );
@@ -25,7 +28,12 @@ export function FormLabel({
   className?: string;
 }) {
   return (
-    <label className={cn("mb-1 block text-sm font-medium", className)}>
+    <label
+      className={cn(
+        "mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-mute",
+        className,
+      )}
+    >
       {children}
     </label>
   );
@@ -40,7 +48,14 @@ export function FormErrorMessage({
 }) {
   if (!children) return null;
   return (
-    <p className={cn("mt-1 text-xs text-red-500", className)}>{children}</p>
+    <p
+      className={cn(
+        "mt-1.5 text-[11px] uppercase tracking-wider text-[color:var(--color-danger)]",
+        className,
+      )}
+    >
+      {children}
+    </p>
   );
 }
 
@@ -52,7 +67,12 @@ export function FormHelperText({
   className?: string;
 }) {
   return (
-    <p className={cn("mt-1 text-xs text-gray-500 dark:text-gray-400", className)}>
+    <p
+      className={cn(
+        "mt-1.5 text-[11px] uppercase tracking-wider text-mute",
+        className,
+      )}
+    >
       {children}
     </p>
   );

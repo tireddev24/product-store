@@ -2,11 +2,13 @@ import { useState } from "react";
 import { useAuth } from "../auth/auth";
 
 const useSignUp = () => {
-  const { login, url } = useAuth();
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(null);
+  const func = useAuth();
+  const url = func?.url;
+  const login = func?.login!;
+  const [error, setError] = useState<null | string>(null);
+  const [loading, setLoading] = useState(false);
 
-  const registerUser = async (values) => {
+  const registerUser = async (values: any) => {
     if (values.password !== values.confirmPassword) {
       setError("Passwords do not match");
     }
@@ -42,7 +44,7 @@ const useSignUp = () => {
 
         return { success: data.success, message: "Registration failed!" };
       }
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message);
       return { success: false, message: "Unable to communicate with server" };
     } finally {

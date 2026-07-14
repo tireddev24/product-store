@@ -1,12 +1,19 @@
-import {
-  Container,
-  Input,
-  Icon,
-  Box,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { FaSearch } from "react-icons/fa";
+import { Search } from "lucide-react";
+import { Input } from "./ui/Input";
+
+type Product = { _id: string; name: string };
+
+type SearchBarProps = {
+  searchval: string;
+  products: Product[];
+  sortKey: unknown;
+  getSortedProducts: (
+    products: Product[],
+    q: string,
+    key: unknown,
+  ) => Product[];
+  setSearchVal: (v: string) => void;
+};
 
 const SearchBar = ({
   searchval,
@@ -14,57 +21,42 @@ const SearchBar = ({
   sortKey,
   getSortedProducts,
   setSearchVal,
-}) => {
-  const searchbg = useColorModeValue("white", "blue.900");
+}: SearchBarProps) => {
+  const results = searchval
+    ? getSortedProducts(products, searchval, sortKey).slice(0, 5)
+    : [];
 
   return (
-    <Container position={"relative"} w={{ base: "17rem", sm: "22rem" }}>
+    <div className="relative mx-auto w-full max-w-md">
+      <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gold" />
       <Input
-        variant={"flushed"}
-        placeholder="Product Name"
+        variant="flushed"
+        placeholder="Search products"
         onChange={(e) => setSearchVal(e.target.value)}
         name="search"
         value={searchval}
-        borderBottomColor={"cyan.700"}
-        p={2}
-
-        // border={'1px solid #00B5D8'}
+        className="pl-9"
       />
-      <Icon position={"absolute"} fontSize={"2xl"} right={6} top={2}>
-        <FaSearch />
-      </Icon>
-      <Box
-        position={"absolute"}
-        zIndex={2}
-        w={"20rem"}
-        borderRadius={"0.2rem"}
-        bg={searchbg}
-      >
-        {searchval &&
-          getSortedProducts(products, searchval, sortKey).map((product) => {
-            if (!product) {
-              console.log(1);
-              return (
-                <Box>
-                  <Text>No products found!</Text>
-                </Box>
-              );
-            } else {
-              return (
-                <Box
-                  p={2.5}
-                  _hover={{ bg: useColorModeValue("gray.100", "cyan.500") }}
-                  borderRadius={"0.1rem"}
-                  cursor={"text"}
-                  textAlign={"left"}
-                >
-                  <Text fontWeight={"bold"}>{product.name}</Text>
-                </Box>
-              );
-            }
-          })}
-      </Box>
-    </Container>
+
+      {searchval && (
+        <div className="absolute z-20 mt-2 w-full border border-hairline bg-surface-2 py-1 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.9)]">
+          {results.length === 0 ? (
+            <p className="px-4 py-3 text-xs uppercase tracking-widest text-mute">
+              No products found
+            </p>
+          ) : (
+            results.map((product) => (
+              <div
+                key={product._id}
+                className="cursor-pointer px-4 py-2 text-left text-sm text-ivory transition hover:bg-noir-2 hover:text-gold"
+              >
+                <p className="font-medium">{product.name}</p>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 

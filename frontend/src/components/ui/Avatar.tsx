@@ -21,15 +21,15 @@ export function Avatar({
     : "?";
 
   const sizes = {
-    sm: "size-8 text-xs",
-    md: "size-10 text-sm",
-    xl: "size-14 text-base",
+    sm: "size-8 text-[10px]",
+    md: "size-10 text-xs",
+    xl: "size-16 text-sm",
   };
 
   return (
     <div
       className={cn(
-        "relative inline-flex items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 font-semibold text-white",
+        "relative inline-flex items-center justify-center rounded-full border border-gold/40 bg-surface font-semibold uppercase tracking-widest text-gold",
         sizes[size],
         className,
       )}
@@ -47,13 +47,16 @@ export function AvatarBadge({
   className?: string;
   bg?: string;
 }) {
-  const colorClass =
-    bg?.includes("green") ? "bg-green-500" : bg?.includes("red") ? "bg-red-400" : "bg-gray-400";
+  const colorClass = bg?.includes("green")
+    ? "bg-[color:var(--color-success)]"
+    : bg?.includes("red")
+      ? "bg-[color:var(--color-danger)]"
+      : "bg-mute";
 
   return (
     <span
       className={cn(
-        "absolute right-0 bottom-0 size-3 rounded-full border-2 border-white dark:border-gray-900",
+        "absolute right-0 bottom-0 size-2.5 rounded-full border border-noir",
         colorClass,
         className,
       )}
