@@ -3,7 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useProfileStore } from "../store/product";
 import { useAuth } from "../auth/auth";
 import { useToast } from "../context/ToastContext";
-import Spin from "../components/spinner";
+import Spin from "@/components/ui/Spinner";
+
 import Profile from "../components/profile";
 
 const ProfilePage = () => {
@@ -34,10 +35,7 @@ const ProfilePage = () => {
   if (!isAuthenticated) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center">
-        <Link
-          to="/login"
-          className="hover-underline text-sm uppercase tracking-[0.2em] text-gold"
-        >
+        <Link to="/login" className="hover-underline text-sm uppercase tracking-[0.2em] text-gold">
           Login to view profile
         </Link>
       </div>

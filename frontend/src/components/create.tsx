@@ -1,6 +1,6 @@
 import { Info } from "lucide-react";
 import type { RefObject } from "react";
-import Spin from "./spinner";
+import Spin from "@/components/ui/Spinner";
 import DragAndDropUpload from "./draganddrop";
 import { Button } from "./ui/Button";
 import { FormControl, FormLabel } from "./ui/Form";
@@ -14,9 +14,7 @@ type CreateProps = {
   newProduct: { name: string; price: string; image: string };
   nameref: RefObject<HTMLInputElement>;
   priceref: RefObject<HTMLInputElement>;
-  handleFileUpload: (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => Promise<string | undefined>;
+  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<string | undefined>;
   load: boolean;
 };
 
@@ -42,9 +40,7 @@ const Create = ({
       <div className="grid grid-cols-1 gap-8 md:grid-cols-[1.05fr_1fr]">
         {/* Image */}
         <div className="border border-hairline bg-noir-2 p-5">
-          <p className="mb-2 text-[10px] uppercase tracking-[0.25em] text-mute">
-            Product image
-          </p>
+          <p className="mb-2 text-[10px] uppercase tracking-[0.25em] text-mute">Product image</p>
           <DragAndDropUpload handleFileUpload={handleFileUpload} />
         </div>
 
@@ -64,9 +60,7 @@ const Create = ({
               name="name"
               ref={nameref}
               value={newProduct.name}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, name: e.target.value })
-              }
+              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
             />
           </FormControl>
 
@@ -78,9 +72,7 @@ const Create = ({
               ref={priceref}
               type="number"
               value={newProduct.price}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, price: e.target.value })
-              }
+              onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
             />
           </FormControl>
 

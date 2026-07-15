@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "../context/ToastContext";
 import { useProfileStore } from "../store/product";
-import Spin from "./spinner";
+import Spin from "@/components/ui/Spinner";
 import { Button } from "./ui/Button";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "./ui/Modal";
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import { useCartStore, useFavStore } from "../store/product";
-import Spin from "./spinner";
+import Spin from "@/components/ui/Spinner";
 import { useAuth } from "../auth/auth";
 import { useToast } from "../context/ToastContext";
 import { Kicker, Section } from "./ui/Layout";
@@ -10,7 +10,9 @@ import { Kicker, Section } from "./ui/Layout";
 const Cart = () => {
   const { cart, fetchCart, removeFromCart } = useCartStore();
   const { getFavorites, favorites } = useFavStore();
-  const { isAuthenticated, userData } = useAuth();
+  const func = useAuth();
+  const isAuthenticated = func?.isAuthenticated;
+  const userData = func?.userData;
   const toast = useToast();
   const [error, setError] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,10 +54,7 @@ const Cart = () => {
   if (!isAuthenticated) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center">
-        <Link
-          to="/login"
-          className="hover-underline text-sm uppercase tracking-[0.2em] text-gold"
-        >
+        <Link to="/login" className="hover-underline text-sm uppercase tracking-[0.2em] text-gold">
           Login to view cart
         </Link>
       </div>
@@ -106,10 +105,7 @@ const Cart = () => {
         <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {cart.map((c: any) => {
             const isFavourite =
-              favorites &&
-              favorites[0]?.favs.some(
-                (f: any) => f.product._id === c.product._id,
-              );
+              favorites && favorites[0]?.favs.some((f: any) => f.product._id === c.product._id);
             return (
               <ProductCard
                 key={c._id}
@@ -123,16 +119,9 @@ const Cart = () => {
         </div>
       ) : (
         <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 border border-hairline px-6 py-16 text-center">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-gold">
-            Empty
-          </p>
-          <p className="text-lg text-ivory">
-            No products have been added to cart.
-          </p>
-          <Link
-            to="/"
-            className="hover-underline mt-4 text-xs uppercase tracking-widest text-gold"
-          >
+          <p className="text-[10px] uppercase tracking-[0.35em] text-gold">Empty</p>
+          <p className="text-lg text-ivory">No products have been added to cart.</p>
+          <Link to="/" className="hover-underline mt-4 text-xs uppercase tracking-widest text-gold">
             Browse the store
           </Link>
         </div>

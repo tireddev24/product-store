@@ -1,6 +1,8 @@
 import { Link, Outlet } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import Spin from "./spinner";
+
+import Spin from "@/components/ui/Spinner";
+
 import { Button } from "./ui/Button";
 import { Kicker } from "./ui/Layout";
 
@@ -11,12 +13,7 @@ type ProfileProps = {
   isLoading: boolean;
 };
 
-const Profile = ({
-  profileProducts,
-  userData,
-  path,
-  isLoading,
-}: ProfileProps) => {
+const Profile = ({ profileProducts, userData, path, isLoading }: ProfileProps) => {
   const inCreate = path.includes("create");
 
   return (
@@ -27,8 +24,7 @@ const Profile = ({
             <div className="flex flex-col gap-3">
               <Kicker>Profile</Kicker>
               <h1 className="display-serif text-3xl md:text-5xl">
-                Welcome back,{" "}
-                <span className="text-gold">{userData?.username}</span>.
+                Welcome back, <span className="text-gold">{userData?.username}</span>.
               </h1>
               {profileProducts.length > 0 && (
                 <p className="text-xs uppercase tracking-[0.25em] text-mute">
@@ -59,12 +55,8 @@ const Profile = ({
 
           {profileProducts.length === 0 && !isLoading && (
             <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 border border-hairline px-6 py-16 text-center">
-              <p className="text-[10px] uppercase tracking-[0.35em] text-gold">
-                Empty catalogue
-              </p>
-              <p className="text-lg text-ivory">
-                You have not created any products yet.
-              </p>
+              <p className="text-[10px] uppercase tracking-[0.35em] text-gold">Empty catalogue</p>
+              <p className="text-lg text-ivory">You have not created any products yet.</p>
               <Link
                 to="create"
                 className="hover-underline mt-4 text-xs uppercase tracking-widest text-gold"
