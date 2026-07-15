@@ -1,6 +1,6 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express from "express";
+import express, { Request, Response } from "express";
 import morgan from "morgan";
 import router from "./routes/root.route.js";
 import { FRONTEND_URL, NODE_ENV } from "./secrets.js";
@@ -31,11 +31,11 @@ const createApp = () => {
   //ROUTES
   app.use("/api", router);
 
-  app.get("/ping_dev", (req, res) => {
+  app.get("/ping_dev", (req: Request, res: Response) => {
     res.send("Pong");
   });
 
-  app.get("/ping", async (req, res) => {
+  app.get("/ping", async (req: Request, res: Response) => {
     try {
       // 1. Run a lightweight query to keep DB pool alive
       // If using Mongoose/MongoDB:
@@ -54,7 +54,7 @@ const createApp = () => {
     }
   });
 
-  app.all("/*wildcard", (req, res) => {
+  app.all("/*wildcard", (req: Request, res: Response) => {
     res.status(404).json({
       status: "fail",
       message: `${req.method} : ${req.originalUrl} not found.`,
