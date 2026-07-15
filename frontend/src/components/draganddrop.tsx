@@ -1,12 +1,11 @@
 import { useState, useCallback, type ChangeEvent, type DragEvent } from "react";
 import { CloudUpload, FileCheck2 } from "lucide-react";
-import Spin from "./spinner";
+import Spin from "@/components/ui/Spinner";
+
 import { cn } from "../lib/cn";
 
 type Props = {
-  handleFileUpload: (
-    e: ChangeEvent<HTMLInputElement>,
-  ) => Promise<string | undefined>;
+  handleFileUpload: (e: ChangeEvent<HTMLInputElement>) => Promise<string | undefined>;
 };
 
 const DragAndDropUpload = ({ handleFileUpload }: Props) => {
@@ -49,9 +48,7 @@ const DragAndDropUpload = ({ handleFileUpload }: Props) => {
         role="group"
         className={cn(
           "relative flex h-56 w-full cursor-pointer items-center justify-center border border-dashed transition-all",
-          isDragging
-            ? "border-gold bg-gold/5"
-            : "border-hairline bg-noir-2 hover:border-gold/60",
+          isDragging ? "border-gold bg-gold/5" : "border-hairline bg-noir-2 hover:border-gold/60",
         )}
       >
         <input
@@ -72,25 +69,15 @@ const DragAndDropUpload = ({ handleFileUpload }: Props) => {
           ) : uploading ? (
             <>
               <Spin />
-              <p className="text-xs uppercase tracking-widest text-gold">
-                Uploading...
-              </p>
+              <p className="text-xs uppercase tracking-widest text-gold">Uploading...</p>
             </>
           ) : (
             <>
               <CloudUpload
                 strokeWidth={1.2}
-                className={cn(
-                  "size-10 transition-colors",
-                  isDragging ? "text-gold" : "text-mute",
-                )}
+                className={cn("size-10 transition-colors", isDragging ? "text-gold" : "text-mute")}
               />
-              <p
-                className={cn(
-                  "text-sm font-medium",
-                  isDragging ? "text-gold" : "text-ivory",
-                )}
-              >
+              <p className={cn("text-sm font-medium", isDragging ? "text-gold" : "text-ivory")}>
                 Drag &amp; drop to upload
               </p>
               <p className="text-[11px] uppercase tracking-widest text-mute">

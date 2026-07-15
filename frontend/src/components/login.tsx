@@ -1,7 +1,8 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import Spin from "../components/spinner";
+import Spin from "@/components/ui/Spinner";
+
 import { Button } from "./ui/Button";
 import { FormControl, FormErrorMessage, FormLabel } from "./ui/Form";
 import { Input } from "./ui/Input";

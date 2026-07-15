@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useProductStore, useFavStore } from "../store/product";
-import Spin from "../components/spinner";
+import Spin from "@/components/ui/Spinner";
+
 import { Kicker } from "../components/ui/Layout";
 
 function Favouritepage() {
@@ -72,16 +73,9 @@ function Favouritepage() {
         </div>
       ) : (
         <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 border border-hairline px-6 py-16 text-center">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-gold">
-            Empty
-          </p>
-          <p className="text-lg text-ivory">
-            You haven&apos;t saved anything yet.
-          </p>
-          <Link
-            to="/"
-            className="hover-underline mt-4 text-xs uppercase tracking-widest text-gold"
-          >
+          <p className="text-[10px] uppercase tracking-[0.35em] text-gold">Empty</p>
+          <p className="text-lg text-ivory">You haven&apos;t saved anything yet.</p>
+          <Link to="/" className="hover-underline mt-4 text-xs uppercase tracking-widest text-gold">
             Browse the store
           </Link>
         </div>

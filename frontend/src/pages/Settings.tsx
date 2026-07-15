@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../auth/auth";
 import { useToast } from "../context/ToastContext";
-import Spin from "../components/spinner";
+import Spin from "@/components/ui/Spinner";
+
 import { Button } from "../components/ui/Button";
 import { FormControl, FormLabel } from "../components/ui/Form";
 import { Input } from "../components/ui/Input";

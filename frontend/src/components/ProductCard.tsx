@@ -7,7 +7,8 @@ import { useToast } from "../context/ToastContext";
 import { useDisclosure } from "../hooks/useDisclosure";
 import Deletealert from "./deletealert";
 import Newbadge from "./newbadge";
-import Spin from "./spinner";
+import Spin from "@/components/ui/Spinner";
+
 import { Button, IconButton } from "./ui/Button";
 import { Input } from "./ui/Input";
 import {
@@ -28,12 +29,7 @@ type ProductCardProps = {
   cartItemId?: string;
 };
 
-const ProductCard = ({
-  product,
-  fav,
-  handleRemoveFromCart,
-  cartItemId,
-}: ProductCardProps) => {
+const ProductCard = ({ product, fav, handleRemoveFromCart, cartItemId }: ProductCardProps) => {
   const func = useAuth();
   const isAuthenticated = func?.isAuthenticated!;
   const { updateProduct } = useProfileStore();
@@ -41,11 +37,7 @@ const ProductCard = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setIsLoading] = useState(false);
   const toast = useToast();
-  const {
-    isOpen: isDeleteOpen,
-    onOpen: onDeleteOpen,
-    onClose: onDeleteClose,
-  } = useDisclosure();
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const location = useLocation();
   const { addToCart } = useCartStore();
   const [inCart, setInCart] = useState(false);
@@ -161,9 +153,7 @@ const ProductCard = ({
             <Heart
               className={cn(
                 "size-4 transition-colors",
-                fav && isAuthenticated
-                  ? "fill-gold text-gold"
-                  : "text-ivory group-hover:text-gold",
+                fav && isAuthenticated ? "fill-gold text-gold" : "text-ivory group-hover:text-gold",
               )}
               strokeWidth={1.5}
             />
@@ -187,12 +177,8 @@ const ProductCard = ({
             )}
           </div>
           <div className="text-right">
-            <p className="text-[9px] uppercase tracking-[0.25em] text-mute">
-              Price
-            </p>
-            <p className="text-base font-semibold tracking-tight text-gold">
-              ${product.price}
-            </p>
+            <p className="text-[9px] uppercase tracking-[0.25em] text-mute">Price</p>
+            <p className="text-base font-semibold tracking-tight text-gold">${product.price}</p>
           </div>
         </div>
 
@@ -200,11 +186,7 @@ const ProductCard = ({
           {!pathname.includes("profile") &&
             !pathname.includes("/viewcart") &&
             (inCart && isAuthenticated ? (
-              <Button
-                disabled
-                leftIcon={<Check className="size-4" />}
-                className="w-full"
-              >
+              <Button disabled leftIcon={<Check className="size-4" />} className="w-full">
                 Added
               </Button>
             ) : (
@@ -236,11 +218,7 @@ const ProductCard = ({
               >
                 <Trash2 className="size-4" />
               </IconButton>
-              <Deletealert
-                isOpen={isDeleteOpen}
-                onClose={onDeleteClose}
-                product={product}
-              />
+              <Deletealert isOpen={isDeleteOpen} onClose={onDeleteClose} product={product} />
             </div>
           )}
 
@@ -276,9 +254,7 @@ const ProductCard = ({
               placeholder="Product name"
               name="name"
               value={updatedProduct.name}
-              onChange={(e) =>
-                setUpdatedProduct({ ...updatedProduct, name: e.target.value })
-              }
+              onChange={(e) => setUpdatedProduct({ ...updatedProduct, name: e.target.value })}
               required
             />
             <Input
@@ -286,18 +262,14 @@ const ProductCard = ({
               name="price"
               type="number"
               value={updatedProduct.price}
-              onChange={(e) =>
-                setUpdatedProduct({ ...updatedProduct, price: e.target.value })
-              }
+              onChange={(e) => setUpdatedProduct({ ...updatedProduct, price: e.target.value })}
               required
             />
             <Input
               placeholder="Image URL"
               name="image"
               value={updatedProduct.image}
-              onChange={(e) =>
-                setUpdatedProduct({ ...updatedProduct, image: e.target.value })
-              }
+              onChange={(e) => setUpdatedProduct({ ...updatedProduct, image: e.target.value })}
               required
             />
           </div>

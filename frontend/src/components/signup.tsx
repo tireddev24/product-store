@@ -1,14 +1,10 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import Spin from "../components/spinner";
+import Spin from "@/components/ui/Spinner";
+
 import { Button } from "./ui/Button";
-import {
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-} from "./ui/Form";
+import { FormControl, FormErrorMessage, FormHelperText, FormLabel } from "./ui/Form";
 import { Input } from "./ui/Input";
 import { Kicker } from "./ui/Layout";
 import { cn } from "../lib/cn";
@@ -62,9 +58,7 @@ const SignUp = ({
               placeholder="First name"
               required
               value={SignUpData.firstname}
-              onChange={(e) =>
-                setSignUpData({ ...SignUpData, firstname: e.target.value })
-              }
+              onChange={(e) => setSignUpData({ ...SignUpData, firstname: e.target.value })}
             />
           </FormControl>
 
@@ -76,9 +70,7 @@ const SignUp = ({
               type="text"
               required
               value={SignUpData.lastname}
-              onChange={(e) =>
-                setSignUpData({ ...SignUpData, lastname: e.target.value })
-              }
+              onChange={(e) => setSignUpData({ ...SignUpData, lastname: e.target.value })}
             />
           </FormControl>
 
@@ -89,9 +81,7 @@ const SignUp = ({
               placeholder="Username"
               type="text"
               value={SignUpData.username}
-              onChange={(e) =>
-                setSignUpData({ ...SignUpData, username: e.target.value })
-              }
+              onChange={(e) => setSignUpData({ ...SignUpData, username: e.target.value })}
             />
             {SignUpData.username && (
               <FormHelperText
@@ -120,9 +110,7 @@ const SignUp = ({
                 })
               }
             />
-            {invalid.email && (
-              <FormErrorMessage>Please enter a valid email</FormErrorMessage>
-            )}
+            {invalid.email && <FormErrorMessage>Please enter a valid email</FormErrorMessage>}
           </FormControl>
 
           <FormControl isInvalid={invalid.password}>
@@ -137,9 +125,7 @@ const SignUp = ({
                 maxLength={16}
                 required
                 className="pr-10"
-                onChange={(e) =>
-                  setSignUpData({ ...SignUpData, password: e.target.value })
-                }
+                onChange={(e) => setSignUpData({ ...SignUpData, password: e.target.value })}
               />
               <button
                 type="button"
@@ -147,11 +133,7 @@ const SignUp = ({
                 className="absolute top-1/2 right-0 -translate-y-1/2 p-2 text-mute transition hover:text-gold"
                 aria-label={pass ? "Hide password" : "Show password"}
               >
-                {pass ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
+                {pass ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
             <FormHelperText>Minimum 8 characters</FormHelperText>
@@ -182,16 +164,10 @@ const SignUp = ({
                 className="absolute top-1/2 right-0 -translate-y-1/2 p-2 text-mute transition hover:text-gold"
                 aria-label={pass ? "Hide password" : "Show password"}
               >
-                {pass ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
+                {pass ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
-            {invalid.password && (
-              <FormErrorMessage>Passwords do not match</FormErrorMessage>
-            )}
+            {invalid.password && <FormErrorMessage>Passwords do not match</FormErrorMessage>}
           </FormControl>
         </div>
 
