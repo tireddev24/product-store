@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SignUp from "../components/signup";
 import useSignUp from "../hooks/useSignUp";
-import { SERVER_URI as url } from "../utils/secrets";
+import { SERVER_URI as url } from "../lib/secrets";
 import { useToast } from "../context/ToastContext";
 
 const INITIAL_FORM_STATE = {
@@ -88,8 +88,7 @@ const SignUpPage = () => {
   }, [signUpData.password, signUpData.confirmPassword]);
 
   const validateEmail = useCallback(() => {
-    const isEmailValid =
-      signUpData.email === "" || VALIDATION_RULES.email(signUpData.email);
+    const isEmailValid = signUpData.email === "" || VALIDATION_RULES.email(signUpData.email);
     setInvalid((prev) => ({ ...prev, email: !isEmailValid }));
   }, [signUpData.email]);
 

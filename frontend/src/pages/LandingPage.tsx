@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/navbar";
 import Downtime from "../components/downtime/downtime";
-import { MAINTENANCE_MODE as MODE } from "../utils/secrets";
+import { MAINTENANCE_MODE as MODE } from "../lib/secrets";
 
 const MAINTENANCE_MODE = MODE;
 console.log("MAINTENANCE_MODE", MAINTENANCE_MODE);

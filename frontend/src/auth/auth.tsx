@@ -1,13 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { SERVER_URI as url } from "../utils/secrets";
+import { SERVER_URI as url } from "../lib/secrets";
 
 export interface AuthContextType {
   isAuthenticated: null | boolean;
   login: (newData: any) => void;
   logout: () => void;
-  updateProfile: (
-    updates: any,
-  ) => Promise<{ success: boolean; message: string }>;
+  updateProfile: (updates: any) => Promise<{ success: boolean; message: string }>;
   userData: null | any;
   url: string;
 }
@@ -81,9 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, updateProfile, userData, url }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, updateProfile, userData, url }}>
       {children}
     </AuthContext.Provider>
   );

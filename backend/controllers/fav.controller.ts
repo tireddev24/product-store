@@ -4,6 +4,7 @@ import Favourite from "../models/fav.model.js";
 import Product from "../models/product.model.js";
 import User from "../models/user.model.js";
 import { AuthenticatedRequest } from "../middlewares/jwtverify.js";
+import { getErrorMessage } from "../utils/helpers.js";
 
 export const AddToFavourites = async (
   req: AuthenticatedRequest,
@@ -113,8 +114,8 @@ export const removeFromFavourites = async (
 
     res.status(201).json({ success: true, message: "Removed from favourites!" });
     return;
-  } catch (error: any) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: getErrorMessage(error) });
     return;
   }
 };

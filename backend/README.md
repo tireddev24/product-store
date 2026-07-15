@@ -1,4 +1,4 @@
-# 📱 Product Store Backend 
+# 📱 Product Store Backend
 
 A RESTful backend for a Product Store application, built with Express and a MongoDB database.
 
@@ -7,7 +7,7 @@ A RESTful backend for a Product Store application, built with Express and a Mong
 ## 🚀 Features
 
 - 🔐 JWT authentication
-- 🧑 User Sign up & login, 
+- 🧑 User Sign up & login,
 - 📝 CRUD - Create, View, Edit, and Delete Products,
 - 🚫 Rate Limiting in login route to avoid brute force attacks
 - 🔌 RESTful API architecture
@@ -32,7 +32,7 @@ A RESTful backend for a Product Store application, built with Express and a Mong
 - ├── models/ // Mongoose models
 - ├── routes/ // Express routers
 - ├── utils/ // Helper functions
-- ├── secrets.js/ // Environment Variables  
+- ├── secrets.js/ // Environment Variables
 - └── server.js // Server Entry Point
 
 ## 📬 API Endpoints
@@ -45,7 +45,6 @@ POST /api/auth/login — Login and set cookie
 
 POST /api/auth/logout - Logout and clear cookie
 
-
 **USERS**
 
 GET /api/users/getuser — Get Logged In User Details
@@ -53,7 +52,6 @@ GET /api/users/getuser — Get Logged In User Details
 GET /api/users/getallusers — Get All Users
 
 POST /api/users/checkusername — Check UserName Availability
-
 
 **PRODUCTS**
 
@@ -69,17 +67,13 @@ PUT /api/products/profile/edit/:id - Update a product's details
 
 DELETE /api/products/profile/delete/:id - Delete a product
 
-
 **CART**
 
 GET /api/cart/getcart — Get Profile Cart
 
-GET /api/cart/allcart — Get all cart items 
-
 POST /api/cart/addtocart/:id — Add a product to cart
 
 DELETE /api/cart/removefromcart/:id — Remove a product from cart
-
 
 **FAVOURITES**
 
@@ -88,8 +82,6 @@ GET /api/fav/getfav - Get Profile Favourites
 POST /api/fav/addtofav/:id - Add a product to favourites
 
 DELETE /api/fav/removefromfav/:id - Remove a product from favourites
-
-
 
 ### 👨‍💻 AUTHOR
 

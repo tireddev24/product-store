@@ -1,10 +1,11 @@
 import { Response } from "express";
 import mongoose from "mongoose";
 import Product from "../models/product.model.js";
-import User from "../models/user.model.js";
+import User, { IUser } from "../models/user.model.js";
 import Favourite from "../models/fav.model.js";
 import Cart from "../models/cart.model.js";
 import { AuthenticatedRequest } from "../middlewares/jwtverify.js";
+import { getErrorMessage } from "../utils/helpers.js";
 
 export const getProducts = async (
   req: AuthenticatedRequest,
@@ -17,11 +18,11 @@ export const getProducts = async (
     });
     res.status(200).json({ success: true, data: products });
     return;
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Server Error",
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return;
   }
@@ -42,12 +43,12 @@ export const getSearchedProduct = async (
     const products = await Product.find({ _id: id });
     res.status(200).json({ success: true, data: products });
     return;
-  } catch (error: any) {
+  } catch (error) {
     console.log(`error in fetching searched product`);
     res.status(500).json({
       success: false,
       message: "Could not fetch searched data",
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return;
   }
@@ -93,11 +94,11 @@ export const createProduct = async (
       message: "New Product created!",
     });
     return;
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Product not created",
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return;
   }
@@ -142,11 +143,11 @@ export const updateProduct = async (
       message: "Product Details Updated",
     });
     return;
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Server Error",
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return;
   }
@@ -197,10 +198,9 @@ export const deleteProduct = async (
     const deletedFavIds = deletedFavs.map((f) => f._id);
     await Favourite.deleteMany({ product: prodId });
     if (deletedFavIds.length > 0) {
-      await User.updateMany(
-        {},
-        { $pull: { favs: { $in: deletedFavIds } } } as any,
-      );
+      await User.updateMany({}, {
+        $pull: { favs: { $in: deletedFavIds } },
+      } as mongoose.UpdateQuery<IUser>);
     }
 
     // 4. Find and delete all Cart documents related to this product, and pull from users' list
@@ -208,19 +208,18 @@ export const deleteProduct = async (
     const deletedCartIds = deletedCarts.map((c) => c._id);
     await Cart.deleteMany({ product: prodId });
     if (deletedCartIds.length > 0) {
-      await User.updateMany(
-        {},
-        { $pull: { cartedProducts: { $in: deletedCartIds } } } as any,
-      );
+      await User.updateMany({}, {
+        $pull: { cartedProducts: { $in: deletedCartIds } },
+      } as mongoose.UpdateQuery<IUser>);
     }
 
     res.status(200).json({ success: true, message: "Product deleted" });
     return;
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Product could not be deleted",
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return;
   }
@@ -250,11 +249,11 @@ export const profileProducts = async (
       product: prod,
     });
     return;
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Server Error",
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return;
   }

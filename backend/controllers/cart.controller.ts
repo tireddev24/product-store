@@ -148,7 +148,7 @@ export const removeProduct = async (
     res.status(200).json({
       success: true,
       data: prod,
-      message: `Removed ${inCart.product ? (inCart.product as any).name : "product"} from cart`,
+      message: `Removed ${inCart.product ? inCart.product.name : "product"} from cart`,
     });
     return;
   } catch (error) {
@@ -158,29 +158,4 @@ export const removeProduct = async (
   }
 };
 
-export const allCartedProducts = async (
-  req: AuthenticatedRequest,
-  res: Response,
-): Promise<void> => {
-  try {
-    const cart = await Cart.find()
-      .populate({ path: "cartowner", select: "username email " })
-      .populate({ path: "product", select: "name price image createdAt" });
 
-    if (cart.length === 0) {
-      res
-        .status(200)
-        .json({ success: true, message: "No products in cart", cart: [] });
-      return;
-    }
-
-    res
-      .status(200)
-      .json({ success: true, message: "Fetched products in cart", cart });
-    return;
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false, message: "Server Error" });
-    return;
-  }
-};

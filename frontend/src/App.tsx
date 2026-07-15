@@ -11,7 +11,7 @@ import Rooterror from "./components/error/rooterror";
 import Landing from "./pages/LandingPage";
 import Nopage from "./components/error/nopage";
 import SignUpPage from "./pages/SignUpPage";
-import Protected from "./utils/protected";
+import Protected from "./lib/protected";
 
 function App() {
   return (

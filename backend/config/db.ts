@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { getErrorMessage } from "../utils/helpers.js";
 
 export const connectDB = async () => {
   const mongoUri = process.env.MONGO_URI;
@@ -11,8 +12,8 @@ export const connectDB = async () => {
       dbName: "product_store",
     });
     console.log(`DB Connected: ${conn.connection.port}`); //for debugging
-  } catch (error: any) {
-    console.error(`Error: ${error.message}`);
+  } catch (error) {
+    console.error(`Error: ${getErrorMessage(error)}`);
     process.exit(1); // process code 1 means failure, code 0 means success
   }
 };

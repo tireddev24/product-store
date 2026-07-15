@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { compareSync, hashSync } from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import User from "../models/user.model.js";
+import User, { IUser } from "../models/user.model.js";
 import Login from "../models/login.model.js";
 import { JWT_SECRET } from "../secrets.js";
 import { AuthenticatedRequest } from "../middlewares/jwtverify.js";
+import { getErrorMessage } from "../utils/helpers.js";
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -55,11 +56,11 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       message: "User registered successfully",
     });
     return;
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Server Error",
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return;
   }
@@ -77,7 +78,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const user = (await User.findOne({ email }).lean()) as any;
+    const user = await User.findOne({ email }).lean<IUser>();
 
     if (!user) {
       res.status(404).json({ success: false, message: "Invalid Credentials" });
@@ -91,7 +92,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     await Login.create({ user_id: user._id, username: user.username });
 
-    const { password, updatedAt, __v, ...data } = user;
+    const { password, updatedAt, ...data } = user;
 
     const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
       expiresIn: "2h",
@@ -111,11 +112,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
 
     return;
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Server Error",
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return;
   }
@@ -143,11 +144,11 @@ export const logout = async (
 
     res.status(200).json({ success: true, message: "Log out successful" });
     return;
-  } catch (error: any) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: "Server Error",
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return;
   }

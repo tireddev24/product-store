@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../auth/auth";
+import { getErrorMessage } from "../lib/helper";
 const useLogout = () => {
-
-    const func = useAuth();
+  const func = useAuth();
   const url = func?.url;
   const logout = func?.logout!;
   const [error, setError] = useState<string | null>(null);
@@ -41,8 +41,8 @@ const useLogout = () => {
 
       await logout();
       return { success: data.success, message: data.message };
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError(getErrorMessage(error));
       console.error(error);
       return { success: false, message: "Unable to communicate with server" };
     } finally {

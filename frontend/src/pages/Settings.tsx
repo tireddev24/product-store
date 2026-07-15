@@ -7,12 +7,14 @@ import { FormControl, FormLabel } from "../components/ui/Form";
 import { Input } from "../components/ui/Input";
 import { Kicker } from "../components/ui/Layout";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "../components/ui/Modal";
+import { useProfileStore } from "../store/product";
 
 const Settings = () => {
   const func = useAuth();
   const isAuthenticated = func?.isAuthenticated!;
   const userData = func?.userData;
-  const updateProfile = func?.updateProfile!;
+  const login = func?.login!;
+  const { updateProfile } = useProfileStore();
   const toast = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,7 +33,10 @@ const Settings = () => {
 
   const handleProfileEdit = async () => {
     setLoading(true);
-    const { success, message } = await updateProfile(formData);
+    const { success, message, user } = await updateProfile(formData);
+
+    login(user);
+
     toast({
       status: success ? "success" : "error",
       description: message,

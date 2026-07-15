@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useFavStore, useProductStore } from "../store/product";
 import { params, priceRange } from "../store/sortparameters";
-import { getSortedProducts } from "../functions/handlers";
+import { getSortedProducts } from "../lib/handlers";
 import { useAuth } from "../auth/auth";
-import { useToast } from "../context/ToastContext";
-import ProductCard from "../components/ProductCard";
-import SortMenu from "../components/sortmenu";
-import PriceRange from "../components/pricerange";
-import SearchBar from "../components/searchbar";
-import Spin from "../components/spinner";
-import { Kicker } from "../components/ui/Layout";
+import { useToast } from "@/context/ToastContext";
+import ProductCard from "@/components/ProductCard";
+import SortMenu from "@/components/sortmenu";
+import PriceRange from "@/components/pricerange";
+import SearchBar from "@/components/searchbar";
+import Spin from "@/components/ui/Spinner";
+import { Kicker } from "@/components/ui/Layout";
 
 const Homepage = () => {
   const { fetchProducts, products } = useProductStore();
@@ -30,12 +30,7 @@ const Homepage = () => {
   const sortstatus = useRef("Newest");
   const handleRef = (status: string) => (sortstatus.current = status);
 
-  const handleClick = (
-    title: string,
-    key: string,
-    direction: string,
-    value: string,
-  ) => {
+  const handleClick = (title: string, key: string, direction: string, value: string) => {
     handleRef(title);
     setSortKey({ key, direction } as any);
     setValue(value);
@@ -114,8 +109,8 @@ const Homepage = () => {
           </h1>
         </div>
         <p className="max-w-md text-sm leading-relaxed text-mute md:text-right md:text-base">
-          A quiet marketplace of considered things. Independent makers, honest
-          prices, and pieces worth keeping.
+          A quiet marketplace of considered things. Independent makers, honest prices, and pieces
+          worth keeping.
         </p>
       </section>
 
@@ -163,27 +158,15 @@ const Homepage = () => {
             <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {sortedProducts.map((product: any) => {
                 const isFavourite =
-                  favorites?.[0]?.favs.some(
-                    (f: any) => f.product._id === product._id,
-                  ) ?? false;
-                return (
-                  <ProductCard
-                    key={product._id}
-                    product={product}
-                    fav={isFavourite}
-                  />
-                );
+                  favorites?.[0]?.favs.some((f: any) => f.product._id === product._id) ?? false;
+                return <ProductCard key={product._id} product={product} fav={isFavourite} />;
               })}
             </div>
           </>
         ) : (
           <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 border border-hairline px-6 py-16 text-center">
-            <p className="text-[10px] uppercase tracking-[0.35em] text-gold">
-              Nothing here yet
-            </p>
-            <p className="text-lg text-ivory">
-              No products match your filters.
-            </p>
+            <p className="text-[10px] uppercase tracking-[0.35em] text-gold">Nothing here yet</p>
+            <p className="text-lg text-ivory">No products match your filters.</p>
             <Link
               to="/profile/create"
               className="hover-underline mt-4 text-xs uppercase tracking-widest text-gold"

@@ -9,12 +9,12 @@ import { verifyJwt } from "../middlewares/jwtverify.js";
 
 const router = express.Router();
 
-router.get("/getuser", verifyJwt as any, getUser as any);
+router.get("/getuser", verifyJwt, getUser);
 
-router.get("/getallusers", getAllUsers as any);
+router.get("/getallusers", verifyJwt, getAllUsers);
 
-router.post("/checkusername", isUserNameAvailable as any);
+router.post("/checkusername", isUserNameAvailable);
 
-router.patch("/update", verifyJwt as any, updateUser as any);
+router.patch("/update", verifyJwt, updateUser);
 
 export default router;

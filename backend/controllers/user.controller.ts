@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import User from "../models/user.model.js";
+import User, { IUser } from "../models/user.model.js";
 import { AuthenticatedRequest } from "../middlewares/jwtverify.js";
+import { getErrorMessage } from "../utils/helpers.js";
 
 export const isUserNameAvailable = async (
   req: Request,
@@ -24,10 +25,10 @@ export const isUserNameAvailable = async (
       .status(200)
       .json({ success: true, message: "Username available", usernames });
     return;
-  } catch (error: any) {
+  } catch (error) {
     res
       .status(500)
-      .json({ message: "Server Error", error: error.message });
+      .json({ message: "Server Error", error: getErrorMessage(error) });
     return;
   }
 };
@@ -96,7 +97,9 @@ export const updateUser = async (
   }
 
   const { firstname, lastname, username, email } = req.body;
-  const updates: any = {};
+  const updates: Partial<
+    Pick<IUser, "firstname" | "lastname" | "username" | "email">
+  > = {};
   if (firstname !== undefined) updates.firstname = firstname;
   if (lastname !== undefined) updates.lastname = lastname;
   if (username !== undefined) updates.username = username;
@@ -150,10 +153,10 @@ export const updateUser = async (
       .status(200)
       .json({ success: true, message: "Profile updated", user: updatedUser });
     return;
-  } catch (error: any) {
+  } catch (error) {
     res
       .status(500)
-      .json({ success: false, message: "Server Error", error: error.message });
+      .json({ success: false, message: "Server Error", error: getErrorMessage(error) });
     return;
   }
 };

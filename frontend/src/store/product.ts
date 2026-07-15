@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { SERVER_URI as url } from "../utils/secrets";
+import { SERVER_URI as url } from "../lib/secrets";
 
 export const useProfileStore = create<any>((set) => ({
   profileProducts: [],
@@ -89,11 +89,31 @@ export const useProfileStore = create<any>((set) => ({
 
     //updates UI immediately without refresh
     set((state: any) => ({
-      profileProducts: state.profileProducts.filter(
-        (product: any) => product._id !== pid,
-      ),
+      profileProducts: state.profileProducts.filter((product: any) => product._id !== pid),
     }));
     return { success: true, message: data.message };
+  },
+  updateProfile: async (updates: any) => {
+    try {
+      const res = await fetch(`${url}/api/users/update`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        return { success: false, message: data.message };
+      }
+
+      return { success: true, message: data.message, user: data.user };
+    } catch (error) {
+      return { success: false, message: "Unable to communicate with server" };
+    }
   },
 }));
 

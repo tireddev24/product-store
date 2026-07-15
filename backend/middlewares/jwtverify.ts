@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import pkg from "jsonwebtoken";
 import { JWT_SECRET } from "../secrets.js";
+import { JwtUserPayload } from "../types/index.js";
 
 const { JsonWebTokenError, TokenExpiredError, verify } = pkg;
 
-export interface AuthenticatedRequest extends Request {
-  user?: any;
-}
+export type AuthenticatedRequest = Request;
 
 export const verifyJwt = (
   req: AuthenticatedRequest,
@@ -26,7 +25,7 @@ export const verifyJwt = (
   const token = access_token;
 
   try {
-    const user = verify(token, JWT_SECRET);
+    const user = verify(token, JWT_SECRET) as JwtUserPayload;
 
     req.user = user;
     next();

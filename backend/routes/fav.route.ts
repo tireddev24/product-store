@@ -8,12 +8,12 @@ import { verifyJwt } from "../middlewares/jwtverify.js";
 
 const router = Router();
 
-router.use(verifyJwt as any);
+router.use(verifyJwt);
 
-router.get("/getfav", getFavourites as any);
+router.get("/getfav", getFavourites);
 
-router.post("/addtofav/:id", AddToFavourites as any);
+router.post("/addtofav/:id", AddToFavourites);
 
-router.delete("/removefromfav/:id", removeFromFavourites as any);
+router.delete("/removefromfav/:id", removeFromFavourites);
 
 export default router;

@@ -5,10 +5,10 @@ import { verifyJwt } from "../middlewares/jwtverify.js";
 
 const router = Router();
 
-router.post("/signup", signupLimit, signup as any);
+router.post("/signup", signupLimit, signup);
 
-router.post("/login", loginLimit, login as any);
+router.post("/login", loginLimit, login);
 
-router.post("/logout", verifyJwt as any, logout as any);
+router.post("/logout", verifyJwt, logout);
 
 export default router;

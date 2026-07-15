@@ -5,6 +5,7 @@ import morgan from "morgan";
 import router from "./routes/root.route.js";
 import { FRONTEND_URL, NODE_ENV } from "./secrets.js";
 import mongoose from "mongoose";
+import { getErrorMessage } from "./utils/helpers.js";
 
 const createApp = () => {
   const app = express();
@@ -22,9 +23,8 @@ const createApp = () => {
     }),
   );
 
-  console.log(FRONTEND_URL);
-
   if (NODE_ENV === "development") {
+    console.log(FRONTEND_URL);
     app.use(morgan("dev"));
   }
 
@@ -36,21 +36,23 @@ const createApp = () => {
   });
 
   app.get("/ping", async (req, res) => {
-  try {
-    // 1. Run a lightweight query to keep DB pool alive
-    // If using Mongoose/MongoDB:
-    await mongoose.connection?.db?.admin().ping();
-    
-    // If using PostgreSQL/Prisma/SQL:
-    // await db.query("SELECT 1");
+    try {
+      // 1. Run a lightweight query to keep DB pool alive
+      // If using Mongoose/MongoDB:
+      await mongoose.connection?.db?.admin().ping();
 
-    console.log("⚡ Database pinged successfully");
-    return res.status(200).json({ status: "alive", db: "connected" });
-  } catch (error: any) {
-    console.error("❌ Ping failed:", error);
-    return res.status(500).json({ status: "error", message: error.message });
-  }
-});
+      // If using PostgreSQL/Prisma/SQL:
+      // await db.query("SELECT 1");
+
+      console.log("⚡ Database pinged successfully");
+      return res.status(200).json({ status: "alive", db: "connected" });
+    } catch (error) {
+      console.error("❌ Ping failed:", error);
+      return res
+        .status(500)
+        .json({ status: "error", message: getErrorMessage(error) });
+    }
+  });
 
   app.all("/*wildcard", (req, res) => {
     res.status(404).json({

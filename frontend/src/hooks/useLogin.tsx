@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../auth/auth";
+import { getErrorMessage } from "../lib/helper";
 
 const useLogin = () => {
   const func = useAuth();
@@ -53,8 +54,8 @@ const useLogin = () => {
       } else {
         return { success: data.success, message: "Login failed!" };
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError(getErrorMessage(error));
       console.log(error);
       return { success: false, message: "Unable to communicate with server" };
     } finally {

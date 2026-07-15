@@ -11,18 +11,18 @@ import {
 
 const router = Router();
 
-router.get("/", getProducts as any);
+router.get("/", getProducts);
 
-router.get("/search/:id", getSearchedProduct as any);
+router.get("/search/:id", getSearchedProduct);
 
-router.use(verifyJwt as any);
+router.use(verifyJwt);
 
-router.get("/profile", profileProducts as any);
+router.get("/profile", profileProducts);
 
-router.post("/create", createProduct as any);
+router.post("/create", createProduct);
 
-router.put("/profile/edit/:id", updateProduct as any);
+router.put("/profile/edit/:id", updateProduct);
 
-router.delete("/profile/delete/:id", deleteProduct as any);
+router.delete("/profile/delete/:id", deleteProduct);
 
 export default router;
